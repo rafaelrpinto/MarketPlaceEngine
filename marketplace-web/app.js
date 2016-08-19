@@ -17,7 +17,7 @@ mongoose.connect('mongodb://localhost/marketplace-engine', function(err) {
 
 var app = express();
 
-// view engine setup
+// view engine  
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -64,6 +64,10 @@ app.use(function(err, req, res, next) {
     message: err.message,
     error: {}
   });
+});
+
+var server = app.listen(8080,function(){
+  console.log('express server listening on port ' + server.address().port);
 });
 
 
