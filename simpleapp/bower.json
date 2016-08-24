@@ -1,0 +1,15 @@
+{
+  "name": "simpleapp",
+  "description": "A simple app",
+  "version": "0.0.0",
+  "homepage": "https://github.com/rafaelrpinto/SimpleNodeApp",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "1.5.8",
+    "angular-route": "1.5.8",
+    "angular-animate": "1.5.8",
+    "angular-bootstrap": "2.1.2",
+    "bootstrap": "3.3.7"
+  }
+}
