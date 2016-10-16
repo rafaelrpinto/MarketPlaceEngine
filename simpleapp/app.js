@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'client')));
 
 // viewed at http://localhost:8080
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + 'client/app/index.html'));
+    res.sendFile(path.join(__dirname + 'client/index.html'));
 });
 
 // Mongo connection setup
