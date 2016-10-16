@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('simpleApp', [
-  'ngRoute'
+  'ngRoute',
+  'accountSearch'
 ]);
 
 angular.
@@ -11,9 +12,9 @@ angular.
       $locationProvider.hashPrefix('!');
 
       $routeProvider.
-        when('/home', {
-          template: '<home></home>'
+        when('/accountSearch', {
+          template: '<account-search></account-search>'
         }).
-        otherwise('/home');
+        otherwise('/accountSearch');
     }
   ]);
