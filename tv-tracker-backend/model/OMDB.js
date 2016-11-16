@@ -32,7 +32,7 @@ function parseOmdbResponse(response, resolve, reject) {
 		if (response.error) {
 			throw "Error executing OMDB request : '" + response.error.code + "'";
 		} else if (response.status > 399) {
-			throw "OMDB returned status :" + response.status;
+			throw "OMDB returned http error code: " + response.status;
 		} else {
 			var responseContentType = response.headers["content-type"];
 			if (!responseContentType || responseContentType.indexOf("application/json") == -1) {
