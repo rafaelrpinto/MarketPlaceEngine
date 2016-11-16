@@ -1,6 +1,7 @@
+var TvSerie = require('../model/TvSerie');
 var express = require('express');
 var router = express.Router();
-var OMDB = require('../model/OMDB');
+
 
 /*
 	Searches for a TV Series title on OMDB.
@@ -8,9 +9,19 @@ var OMDB = require('../model/OMDB');
 router.get('/search/:title', function(req, res) {
 	var title = req.params.title;
 
-	//	TODO: access through Serie model instead of OMDB
-	OMDB.search(title, "series").then(function(response) {
-		res.json(response);
+	//check the title
+	if (!title || title.trim().length == 0) {
+		res.status(400).send("Invalid title");
+		return;
+	}
+
+	//Searched for series according to the path parameter
+	TvSerie.search(title).then(function(response) {
+		if (response.totalResults == 0) {
+			res.status(404).send("No series found with title '" + title + "'");	
+		} else {
+			res.json(response);	
+		}
 	}).catch(function(err) {
 		res.status(500).send("Internal error: " + err);
 	});
