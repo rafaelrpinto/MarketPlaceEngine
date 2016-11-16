@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Promise = require("bluebird");
-var OMDB = Promise.promisifyAll(require('../model/OMDB'));
+var OMDB = require('../model/OMDB');
 
 /*
 	Searches for a TV Series title on OMDB.
