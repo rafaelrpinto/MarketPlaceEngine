@@ -6,16 +6,17 @@ const OMDB_SEARCH_TYPE = "series"
 
 /*
 	Searches for a TV Seies title on OMDB.
-	TODO: move this to the model
 */
 router.get('/search/:title', function(req, res) {
 	var title = req.params.title;
 
-	console.log(OMDB);
-
-	var callback = function(response) {
-		//TODO: error handling
-		res.json(response);
+	//	TODO: access through Serie model instead of OMDB
+	var callback = function(err, response) {
+		if (err) {
+			res.status(500).send("Internal error: " + err.message);
+		} else {
+			res.json(response);
+		}
 	};
 
 	OMDB.search(callback, title, OMDB_SEARCH_TYPE);
