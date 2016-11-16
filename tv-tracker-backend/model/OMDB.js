@@ -11,33 +11,38 @@ const CONTENT_TYPE = "application/json";
 	Searches for a title on OMDB.
 	//TODO: unit tests,...
 */
-OMDB.search = function(callback, searchTerm, searchType) {
-	unirest.get(OMDB_API_URL + '?s=' + searchTerm + "&type=" + searchType)
-		.headers({
-			'Accept': CONTENT_TYPE,
-			'Content-Type': CONTENT_TYPE
-		})
-		.end(function(response) {
-			if (response.error) {
-				//request error check
-				callback(new Error("Error executing OMDB request :" + response.error.code));
-			} else if (response.status > 399) {
-				//response status check
-				callback(new Error("OMDB returned status :" + response.status));
-			} else {
-				//response content type check
-				var responseContentType = response.headers["content-type"];
-				if (!responseContentType || responseContentType.indexOf(CONTENT_TYPE) == -1) {
-					callback(new Error("OMDB returned an invalid content type :'" + responseContentType) + "'");
-				} else if (response.body.Error){
-					// OMDB 200 status with error
-					callback(new Error("OMDB returned an error message : '" + response.body.Error + "'"));
-				} else {
-					//success
-					callback(null, response.body);	
+OMDB.search = function(searchTerm, searchType) {
+	return new Promise(function(resolve, reject) {
+
+		unirest.get(OMDB_API_URL + '?s=' + searchTerm + "&type=" + searchType)
+			.headers({
+				'Accept': CONTENT_TYPE,
+				'Content-Type': CONTENT_TYPE
+			})
+			.end(function(response) {
+				try {
+					if (response.error) {
+						throw "Error executing OMDB request :" + response.error.code;
+					} else if (response.status > 399) {
+						throw "OMDB returned status :" + response.status;
+					} else {
+						var responseContentType = response.headers["content-type"];
+						if (!responseContentType || responseContentType.indexOf(CONTENT_TYPE) == -1) {
+							throw "OMDB returned an invalid content type :'" + responseContentType + "'";
+						} else if (response.body.Error) {
+							throw new "OMDB returned an error message : '" + response.body.Error + "'";
+						} else {
+							//success
+							resolve(response.body);
+						}
+					}
+				} catch (e) {
+					//fail
+					reject(e);
 				}
-			}
-		});
+			});
+	});
 }
+
 
 module.exports = OMDB;
