@@ -1,2 +1,2 @@
 # TvTracker-Backend
-Backend for the future TvTracker app.
+Node.js backend for the future TvTracker app.
