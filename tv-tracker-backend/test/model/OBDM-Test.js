@@ -10,7 +10,7 @@ var OMDB = require('../../model/OMDB');
 //Dependencies to be mocked
 var httpClient = require('../../util/HttpClient');
 
-describe('OMBD', function() {
+describe('OMBD.js', function() {
 	describe('#search()', function() {
 		errorTestTemplate("Error executing OMDB request : 'TestCode'", {
 			error: {
@@ -57,6 +57,40 @@ describe('OMBD', function() {
 				body: {
 					Error: "Movie not found!"
 				}
+			};
+			successTestTemplate(callback, mockResponse);
+		});
+	});
+	describe('#search()', function() {
+		it("Search results found.", function() {
+			var mockResponse = {
+				headers: {
+					"content-type": "application/json"
+				},
+				body: {
+					Search: [{
+						"Title": "The Walking Dead",
+						"Year": "2010–",
+						"imdbID": "tt1520211",
+						"Type": "series",
+						"Poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BMTc5NTU3Njg0N15BMl5BanBnXkFtZTgwMzY4MjM0ODE@._V1_SX300.jpg"
+					}, {
+						"Title": "Fear the Walking Dead",
+						"Year": "2015–",
+						"imdbID": "tt3743822",
+						"Type": "series",
+						"Poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BMjQwODQ5ODYxOV5BMl5BanBnXkFtZTgwNDU3OTA0OTE@._V1_SX300.jpg"
+					}],
+					totalResults : 2
+				}
+			};
+
+			var callback = function(response) {
+				assert(response.totalResults == 2, "Total results should have been 2");
+				assert(response.Search != null, "The search results cannot be null");
+				assert(response.Search.length == 2, "The search results must have 2 elements");
+				assert(response.Search[0].Title == mockResponse.body.Search[0].Title, "[0] Responses not matching!");
+				assert(response.Search[1].Title == mockResponse.body.Search[1].Title, "[1] Responses not matching!");
 			};
 			successTestTemplate(callback, mockResponse);
 		});
