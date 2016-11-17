@@ -6,7 +6,7 @@ var router = express.Router();
 /*
 	Searches for a TV Series title on OMDB.
 */
-router.get('/search/:title', function(req, res) {
+router.get('/search/:title/:page*?', function(req, res) {
 	var title = req.params.title;
 
 	//check the title
@@ -15,7 +15,9 @@ router.get('/search/:title', function(req, res) {
 		return;
 	}
 
-	//Searched for series according to the path parameter
+	//TODO: use page param
+
+	//Searches for series according to the path parameter
 	TvSerie.search(title).then(function(response) {
 		if (response.totalResults == 0) {
 			res.status(404).send("No series found with title '" + title + "'");	

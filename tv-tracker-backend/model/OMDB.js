@@ -17,7 +17,6 @@ OMDB.search = function(searchTerm, searchType) {
 	return new Promise(function(resolve, reject) {
 		var params = '?s=' + searchTerm + "&type=" + searchType;
 		return httpClient.get(OMDB_API_URL, params, function(response) {
-			//TODO: convert data type instead of returning whatever omdb gives us
 			parseOmdbResponse(response, resolve, reject);
 		});
 

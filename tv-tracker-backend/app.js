@@ -19,5 +19,7 @@ app.use('/series', series);
 //DB config
 mongoose.connect('mongodb://localhost:27017/tv-tracker'); // connect to our database
 
+//Models
+var TvSerie = require("./model/TvSerie");
 
 module.exports = app;
