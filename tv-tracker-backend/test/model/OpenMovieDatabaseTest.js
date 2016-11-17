@@ -6,7 +6,7 @@ var assert = require("chai").assert;
 var should = require("chai").should;
 
 //Victim
-var OMDB = require('../../model/OMDB');
+var OpenMovieDatabase = require('../../model/OpenMovieDatabase');
 //Dependencies to be mocked
 var httpClient = require('../../util/HttpClient');
 
@@ -100,7 +100,7 @@ describe('OMBD.js', () => {
 //success test template
 function successTestTemplate(callback, mockResponse) {
 	mockHttpResponse(mockResponse);
-	return OMDB.search("doesn't", 'matter', 1)
+	return OpenMovieDatabase.search("doesn't", 'matter', 1)
 		.then(callback)
 		.catch(function(err) {
 			assert.fail(1, 0, 'Should not have raised the exception: ' + err)
@@ -111,7 +111,7 @@ function successTestTemplate(callback, mockResponse) {
 function errorTestTemplate(expectedError, mockResponse) {
 	it('Should raise: ' + expectedError, () => {
 		mockHttpResponse(mockResponse);
-		return OMDB.search("doesn't", 'matter', 1)
+		return OpenMovieDatabase.search("doesn't", 'matter', 1)
 			.then(() => {
 				assert.fail(1, 0, 'No error was thrown when it should have been')
 

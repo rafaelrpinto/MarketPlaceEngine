@@ -92,7 +92,6 @@ describe('PaginatedResult.js', () => {
 	describe('#new PaginatedResult()', () => {
 		it('Full integrity test', () => {
 			var victim =  new PaginatedResult([1,2,3,4], 1, 11, 4);
-			victim.test();
 			assert(victim.pageResults.length === 4, "The results length should be 4.");
 			assert(victim.pageSize === 4, "The value of 'pageSize' should be 4.");
 			assert(victim.currentPage === 1, "The value of 'currentPage' should be 1.");

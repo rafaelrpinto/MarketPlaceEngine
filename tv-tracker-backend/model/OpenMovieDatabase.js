@@ -3,7 +3,7 @@ var httpClient = require('../util/HttpClient');
 /*
 	Object responsible for interacting with the OMDB api.
 */
-function OMDB() {
+function OpenMovieDatabase() {
 
 }
 
@@ -13,7 +13,7 @@ const OMDB_API_URL = "http://www.omdbapi.com/";
 /*
 	Searches for a title on OMDB.
 */
-OMDB.search = (searchTerm, searchType, page) => {
+OpenMovieDatabase.search = (searchTerm, searchType, page) => {
 	return new Promise((resolve, reject) => {
 		var params = '?s=' + searchTerm + "&type=" + searchType + "&page=" + page;
 		return httpClient.get(OMDB_API_URL, params, (response) => {
@@ -56,4 +56,4 @@ function parseOmdbResponse(response, resolve, reject) {
 	}
 }
 
-module.exports = OMDB;
+module.exports = OpenMovieDatabase;
