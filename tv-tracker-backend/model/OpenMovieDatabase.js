@@ -14,6 +14,9 @@ const OMDB_API_URL = "http://www.omdbapi.com/";
 	Searches for a title on OMDB.
 */
 OpenMovieDatabase.search = (searchTerm, searchType, page) => {
+
+	//TODO: basic validation of the received params
+
 	return new Promise((resolve, reject) => {
 		var params = '?s=' + searchTerm + "&type=" + searchType + "&page=" + page;
 		return httpClient.get(OMDB_API_URL, params, (response) => {

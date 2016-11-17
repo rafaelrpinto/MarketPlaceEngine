@@ -1,5 +1,5 @@
 /*
-	Test case for OMDB.js
+	Test case for OpenMovieDatabase.js
 */
 var sinon = require('sinon');
 var assert = require("chai").assert;
@@ -10,32 +10,24 @@ var OpenMovieDatabase = require('../../model/OpenMovieDatabase');
 //Dependencies to be mocked
 var httpClient = require('../../util/HttpClient');
 
-describe('OMBD.js', () => {
+describe('OpenMovieDatabase.js', () => {
 	describe('#search()', () => {
 		errorTestTemplate("Error executing OMDB request : 'TestCode'", {
 			error: {
 				code: "TestCode"
 			}
 		});
-	});
-	describe('#search()', () => {
 		errorTestTemplate("OMDB returned http error code: 400", {
 			status: 400
 		});
-	});
-	describe('#search()', () => {
 		errorTestTemplate("OMDB returned http error code: 500", {
 			status: 500
 		});
-	});
-	describe('#search()', () => {
 		errorTestTemplate("OMDB returned an invalid content type :'text/html'", {
 			headers: {
 				"content-type": "text/html"
 			}
 		});
-	});
-	describe('#search()', () => {
 		errorTestTemplate("OMDB returned an error message : 'OMDB error'", {
 			headers: {
 				"content-type": "application/json"
@@ -44,10 +36,8 @@ describe('OMBD.js', () => {
 				Error: "OMDB error"
 			}
 		});
-	});
-	describe('#search()', () => {
 		it("Return totalResults = 0 instead of raising an error", () => {
-			var callback = (response) =>  {
+			var callback = (response) => {
 				assert(response.totalResults == 0, "Total results should have been 0");
 			};
 			var mockResponse = {
@@ -60,8 +50,6 @@ describe('OMBD.js', () => {
 			};
 			successTestTemplate(callback, mockResponse);
 		});
-	});
-	describe('#search()', () => {
 		it("Search results found.", () => {
 			var mockResponse = {
 				headers: {
@@ -81,7 +69,7 @@ describe('OMBD.js', () => {
 						"Type": "series",
 						"Poster": "https://images-na.ssl-images-amazon.com/images/M/MV5BMjQwODQ5ODYxOV5BMl5BanBnXkFtZTgwNDU3OTA0OTE@._V1_SX300.jpg"
 					}],
-					totalResults : 2
+					totalResults: 2
 				}
 			};
 
@@ -96,6 +84,7 @@ describe('OMBD.js', () => {
 		});
 	});
 });
+
 
 //success test template
 function successTestTemplate(callback, mockResponse) {
