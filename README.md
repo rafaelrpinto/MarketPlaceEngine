@@ -12,6 +12,10 @@ npm start
 
 Then call the search URL with your browser, postman, ...
 
-`http://localhost:3000/series/search/Walking%20Dead`
+`http://localhost:3000/series/search/Walking Dead`
+
+Optionally inform a page number on the path:
+
+`http://localhost:3000/series/search/Walking Dead/2`
 
 **your local mongodb must be running
