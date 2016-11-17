@@ -2,7 +2,6 @@ var TvSerie = require('../model/TvSerie');
 var express = require('express');
 var router = express.Router();
 
-
 /*
 	Searches for a TV Series title on OMDB.
 */
@@ -33,7 +32,10 @@ router.get('/search/:title/:page*?', (req, res) => {
 			}
 			res.status(404).send(msg);
 		} else {
+			//returns the json
 			res.json(paginatedResult);
+			//saves the new shows after the response
+			TvSerie.insertNew(paginatedResult.pageResults);
 		}
 	}).catch((err) => {
 		res.status(500).send("Internal error: " + err);

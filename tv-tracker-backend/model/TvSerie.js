@@ -8,16 +8,21 @@ var Schema = mongoose.Schema;
 */
 var tvSerieSchema = new Schema({
   title: String,
-  imdbId: String,
+  imdbId: {
+    type: String,
+    index: true
+  },
   description: String,
   posterLink: String,
   metadataComplete: {
     type: Boolean,
-    default: false
+    default: false,
+    index: true
   },
   lastUpdate: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    index: true
   }
 });
 
@@ -30,7 +35,7 @@ tvSerieSchema.methods.toJSON = function() {
   return obj
 }
 
-var TvSerie = mongoose.model('TvSerie', tvSerieSchema);
+var TvSerie = mongoose.model('tvSerie', tvSerieSchema);
 
 //Searches for Tv Series by title
 TvSerie.search = function(searchTerm, page) {
@@ -65,5 +70,38 @@ TvSerie.search = function(searchTerm, page) {
     }).catch(reject);
   });
 };
+
+// inserts the tv shows thar aren't already in the database.
+TvSerie.insertNew = function(newOrExistingTvSeries) {
+  TvSerie.find({
+    "imdbId": {
+      $in: toImdbIdArray(newOrExistingTvSeries)
+    }
+  }).exec((err, existingTvSeries) => {
+    if (err) {
+      console.log("Error searching for series with ids: " + idArray);
+    } else {
+      var existingImdbIds = toImdbIdArray(existingTvSeries);
+      for (let tvSerie of newOrExistingTvSeries) {
+        if (existingImdbIds.indexOf(tvSerie.imdbId) == -1) {
+          //new serie, insert...
+          tvSerie.save(function(err) {
+            if (err) {
+              console.log("Error saving " + tvSerie.imdbId + ": " + err);
+            }
+          });
+        }
+      }
+    }
+  });
+}
+
+function toImdbIdArray(tvSeries) {
+  var idArray = new Array();
+  for (let tvSerie of tvSeries) {
+    idArray.push(tvSerie.imdbId);
+  }
+  return idArray;
+}
 
 module.exports = TvSerie;
