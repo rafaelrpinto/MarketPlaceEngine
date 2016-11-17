@@ -13,3 +13,5 @@ npm start
 Then call the search URL with your browser, postman, ...
 
 `http://localhost:3000/series/search/Walking%20Dead`
+
+**your local mongodb must be running
