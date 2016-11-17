@@ -1,4 +1,5 @@
-var OMDB = require('../model/OMDB');
+var OMDB = require('./OMDB');
+var PaginatedResult = require('./PaginatedResult');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
@@ -32,20 +33,26 @@ tvSerieSchema.methods.toJSON = function() {
 var TvSerie = mongoose.model('TvSerie', tvSerieSchema);
 
 //Searches for Tv Series by title
-TvSerie.search = function(searchTerm) {
+TvSerie.search = function(searchTerm, page) {
   return new Promise(function(resolve, reject) {
-    OMDB.search(searchTerm, "series").then(function(responseBody) {
+    OMDB.search(searchTerm, "series", page).then(function(responseBody) {
       //converts the received data to TvSerie structure
       var searchResults = new Array();
 
-      if (responseBody.Search) {
-        for (var i = 0; i < responseBody.Search.length; i++) {
-          var searchItem = responseBody.Search[i];
+      //data returned by OMDB
+      var receivedPageResults = responseBody.Search;
+      var receivedTotalResultCount = responseBody.totalResults;
+
+
+      if (Array.isArray(receivedPageResults)) {
+        for (var i = 0; i < receivedPageResults.length; i++) {
+          var searchItem = receivedPageResults[i];
           //igonore N/A posters
           if (searchItem.Poster == "N/A") {
             searchItem.Poster = null;
           }
-          //adds the search item to the array
+
+          //converts and adds the search result to the list
           searchResults.push(new TvSerie({
             title: searchItem.Title,
             imdbId: searchItem.imdbID,
@@ -53,11 +60,8 @@ TvSerie.search = function(searchTerm) {
           }));
         }
       }
-
-      resolve({
-        results: searchResults,
-        totalResults: responseBody.totalResults
-      });
+      //returns a paginated result
+      resolve(new PaginatedResult(searchResults, page, receivedTotalResultCount));
     }).catch(reject);
   });
 };

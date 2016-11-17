@@ -10,32 +10,32 @@ var OMDB = require('../../model/OMDB');
 //Dependencies to be mocked
 var httpClient = require('../../util/HttpClient');
 
-describe('OMBD.js', function() {
-	describe('#search()', function() {
+describe('OMBD.js', () => {
+	describe('#search()', () => {
 		errorTestTemplate("Error executing OMDB request : 'TestCode'", {
 			error: {
 				code: "TestCode"
 			}
 		});
 	});
-	describe('#search()', function() {
+	describe('#search()', () => {
 		errorTestTemplate("OMDB returned http error code: 400", {
 			status: 400
 		});
 	});
-	describe('#search()', function() {
+	describe('#search()', () => {
 		errorTestTemplate("OMDB returned http error code: 500", {
 			status: 500
 		});
 	});
-	describe('#search()', function() {
+	describe('#search()', () => {
 		errorTestTemplate("OMDB returned an invalid content type :'text/html'", {
 			headers: {
 				"content-type": "text/html"
 			}
 		});
 	});
-	describe('#search()', function() {
+	describe('#search()', () => {
 		errorTestTemplate("OMDB returned an error message : 'OMDB error'", {
 			headers: {
 				"content-type": "application/json"
@@ -45,9 +45,9 @@ describe('OMBD.js', function() {
 			}
 		});
 	});
-	describe('#search()', function() {
-		it("Return totalResults = 0 instead of raising an error", function() {
-			var callback = function(response) {
+	describe('#search()', () => {
+		it("Return totalResults = 0 instead of raising an error", () => {
+			var callback = (response) =>  {
 				assert(response.totalResults == 0, "Total results should have been 0");
 			};
 			var mockResponse = {
@@ -61,8 +61,8 @@ describe('OMBD.js', function() {
 			successTestTemplate(callback, mockResponse);
 		});
 	});
-	describe('#search()', function() {
-		it("Search results found.", function() {
+	describe('#search()', () => {
+		it("Search results found.", () => {
 			var mockResponse = {
 				headers: {
 					"content-type": "application/json"
@@ -85,7 +85,7 @@ describe('OMBD.js', function() {
 				}
 			};
 
-			var callback = function(response) {
+			var callback = (response) => {
 				assert(response.totalResults == 2, "Total results should have been 2");
 				assert(response.Search != null, "The search results cannot be null");
 				assert(response.Search.length == 2, "The search results must have 2 elements");
@@ -100,7 +100,7 @@ describe('OMBD.js', function() {
 //success test template
 function successTestTemplate(callback, mockResponse) {
 	mockHttpResponse(mockResponse);
-	return OMDB.search("doesn't", 'matter')
+	return OMDB.search("doesn't", 'matter', 1)
 		.then(callback)
 		.catch(function(err) {
 			assert.fail(1, 0, 'Should not have raised the exception: ' + err)
@@ -109,10 +109,10 @@ function successTestTemplate(callback, mockResponse) {
 
 // error test template
 function errorTestTemplate(expectedError, mockResponse) {
-	it('Should raise: ' + expectedError, function() {
+	it('Should raise: ' + expectedError, () => {
 		mockHttpResponse(mockResponse);
-		return OMDB.search("doesn't", 'matter')
-			.then(function() {
+		return OMDB.search("doesn't", 'matter', 1)
+			.then(() => {
 				assert.fail(1, 0, 'No error was thrown when it should have been')
 
 			})
@@ -131,7 +131,7 @@ function mockHttpResponse(response) {
 	}
 
 	//forces httpClient.get to always return the specified response
-	sinon.stub(httpClient, 'get', function(url, params, callback) {
+	sinon.stub(httpClient, 'get', (url, params, callback) => {
 		callback(response);
 	});
 }

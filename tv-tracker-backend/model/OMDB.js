@@ -13,10 +13,10 @@ const OMDB_API_URL = "http://www.omdbapi.com/";
 /*
 	Searches for a title on OMDB.
 */
-OMDB.search = function(searchTerm, searchType) {
-	return new Promise(function(resolve, reject) {
-		var params = '?s=' + searchTerm + "&type=" + searchType;
-		return httpClient.get(OMDB_API_URL, params, function(response) {
+OMDB.search = (searchTerm, searchType, page) => {
+	return new Promise((resolve, reject) => {
+		var params = '?s=' + searchTerm + "&type=" + searchType + "&page=" + page;
+		return httpClient.get(OMDB_API_URL, params, (response) => {
 			parseOmdbResponse(response, resolve, reject);
 		});
 

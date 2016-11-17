@@ -6,7 +6,7 @@ var router = express.Router();
 /*
 	Searches for a TV Series title on OMDB.
 */
-router.get('/search/:title/:page*?', function(req, res) {
+router.get('/search/:title/:page*?', (req, res) => {
 	var title = req.params.title;
 
 	//check the title
@@ -15,16 +15,27 @@ router.get('/search/:title/:page*?', function(req, res) {
 		return;
 	}
 
-	//TODO: use page param
+	var page = 1;
+	if (req.params.page != null) {
+		page = Number(req.params.page);
+		if (isNaN(page) || page < 1 || page % 1 !== 0) {
+			res.status(400).send("Invalid page");
+			return;
+		}
+	}
 
 	//Searches for series according to the path parameter
-	TvSerie.search(title).then(function(response) {
-		if (response.totalResults == 0) {
-			res.status(404).send("No series found with title '" + title + "'");	
+	TvSerie.search(title, page).then((paginatedResult) => {
+		if (paginatedResult.totalResultCount == 0) {
+			var msg = "No series found with title '" + title + "'.";
+			if (page > 1) {
+				msg += " (Or you requested a page that is out of range)"
+			}
+			res.status(404).send(msg);
 		} else {
-			res.json(response);	
+			res.json(paginatedResult);
 		}
-	}).catch(function(err) {
+	}).catch((err) => {
 		res.status(500).send("Internal error: " + err);
 	});
 });
