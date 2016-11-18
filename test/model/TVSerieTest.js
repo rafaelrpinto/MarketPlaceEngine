@@ -63,15 +63,18 @@ describe('TvSerie.js', () => {
 	describe('#findByImdbIds()', () => {
 		it("can be listed by imdbId", function(done) {
 			var newSeries = generateTvSeries(10);
+			var targetIds = ["imdbId1", "imdbId5", "imdbId10", "imdbId99"];
 			TvSerie.create(newSeries, (err, model) => {
 				if (err) return done(err);
-				TvSerie.findByImdbIds(["imdbId1", "imdbId5", "imdbId10", "imdbId99"]).then((newOnes) => {
+				TvSerie.findByImdbIds(targetIds).then((newOnes) => {
 					newOnes.length.should.equal(3);
+					for (tvSerie of newOnes) {
+						assert(targetIds.indexOf(tvSerie.imdbId) != -1, "The meths returned the id '" + tvSerie.imdbId + "' that was not requested ");
+					}
 					done();
 				}).catch(done);
 			});
 		});
-
 		it("doesn't break with an empty collection", function(done) {
 			TvSerie.findByImdbIds(["imdbId1", "imdbId5", "imdbId10", "imdbId99"]).then((newOnes) => {
 				newOnes.length.should.equal(0);

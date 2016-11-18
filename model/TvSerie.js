@@ -74,13 +74,17 @@ TvSerie.search = (searchTerm, page) => {
 // retrieves the series by their imdb id
 TvSerie.findByImdbIds = (imdbIds) => {
   return new Promise((resolve, reject) => {
-    TvSerie.find({
-      "imdbId": {
-        $in: imdbIds
-      }
-    }).exec().then((results) => {
-      resolve(results);
-    }).catch(reject);
+    if (!Array.isArray(imdbIds)) {
+      reject("Invalid paameter for findByImdbIds");
+    } else {
+      TvSerie.find({
+        "imdbId": {
+          $in: imdbIds
+        }
+      }).exec().then((results) => {
+        resolve(results);
+      }).catch(reject);
+    }
   });
 }
 
