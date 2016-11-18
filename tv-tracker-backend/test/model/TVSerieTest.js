@@ -32,7 +32,7 @@ describe('TvSerie.js', () => {
 		});
 	});
 
-	describe('#save()', () => {
+	describe('#find()', () => {
 		it("can be listed", function(done) {
 			new TvSerie({
 				title: "Some tile",
