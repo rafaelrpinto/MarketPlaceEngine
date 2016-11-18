@@ -1,8 +1,9 @@
 var express = require('express');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-var mongoose   = require('mongoose');
 var unirest = require('unirest');
+var mongoose   = require('mongoose');
+mongoose.Promise = require('bluebird');
 
 // Route files
 var series = require('./routes/seriesController');

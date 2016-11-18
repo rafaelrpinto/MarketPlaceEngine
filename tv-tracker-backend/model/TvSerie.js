@@ -78,13 +78,9 @@ TvSerie.findByImdbIds = (imdbIds) => {
       "imdbId": {
         $in: imdbIds
       }
-    }).exec((err, results) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(results);
-      }
-    });
+    }).exec().then((results) => {
+      resolve(results);
+    }).catch(reject);
   });
 }
 
@@ -98,10 +94,8 @@ TvSerie.saveNew = (newOrExistingTvSeries) => {
         //if the current imdb id is not in the db....
         if (existingImdbIds.indexOf(tvSerie.imdbId) == -1) {
           //new serie, insert...
-          tvSerie.save(function(err) {
-            if (err) {
-              reject("Error saving " + tvSerie.imdbId + ": " + err);
-            }
+          tvSerie.save().catch((err) => {
+            reject("Error saving serie with imdb id: " + tvSerie.imdbId + ": " + err);
           });
           newSeries.push(tvSerie);
         }
