@@ -1,6 +1,8 @@
 # TvTracker-Backend
 Node.js backend for the future TvTracker app.
 
+[![Build Status](https://travis-ci.org/rafaelrpinto/TvTracker-Backend.svg?branch=master)](https://travis-ci.org/rafaelrpinto/TvTracker-Backend)
+
 Still on early stages, but if you wanna run it just clone the repository then:
 
 ```bash
