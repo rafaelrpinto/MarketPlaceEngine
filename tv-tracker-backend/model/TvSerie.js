@@ -38,7 +38,7 @@ tvSerieSchema.methods.toJSON = function() {
 var TvSerie = mongoose.model('tvSerie', tvSerieSchema);
 
 //Searches for Tv Series by title
-TvSerie.search = function(searchTerm, page) {
+TvSerie.search = (searchTerm, page) => {
   return new Promise(function(resolve, reject) {
     OpenMovieDatabase.search(searchTerm, "series", page).then(function(responseBody) {
       //converts the received data to TvSerie structure
@@ -71,17 +71,28 @@ TvSerie.search = function(searchTerm, page) {
   });
 };
 
+// retrieves the series by their imdb id
+TvSerie.findByImdbIds = (imdbIds) => {
+  return new Promise((resolve, reject) => {
+    TvSerie.find({
+      "imdbId": {
+        $in: imdbIds
+      }
+    }).exec((err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
+
 // inserts the tv shows thar aren't already in the database.
-TvSerie.insertNew = function(newOrExistingTvSeries) {
-  TvSerie.find({
-    "imdbId": {
-      $in: toImdbIdArray(newOrExistingTvSeries)
-    }
-  }).exec((err, existingTvSeries) => {
-    if (err) {
-      console.log("Error searching for series with ids: " + idArray);
-    } else {
-      //FIXME: replace with selector
+TvSerie.saveNew = (newOrExistingTvSeries) => {
+  return new Promise((resolve, reject) => {
+    TvSerie.findByImdbIds(toImdbIdArray(newOrExistingTvSeries)).then((existingTvSeries) => {
+      var newSeries = new Array();
       var existingImdbIds = toImdbIdArray(existingTvSeries);
       for (let tvSerie of newOrExistingTvSeries) {
         //if the current imdb id is not in the db....
@@ -89,14 +100,14 @@ TvSerie.insertNew = function(newOrExistingTvSeries) {
           //new serie, insert...
           tvSerie.save(function(err) {
             if (err) {
-              console.log("Error saving " + tvSerie.imdbId + ": " + err);
-            } else {
-              console.log("Saving " + tvSerie.imdbId + "...");
+              reject("Error saving " + tvSerie.imdbId + ": " + err);
             }
           });
+          newSeries.push(tvSerie);
         }
       }
-    }
+      resolve(newSeries);
+    }).catch(reject);
   });
 }
 

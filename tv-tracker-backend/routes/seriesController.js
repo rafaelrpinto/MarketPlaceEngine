@@ -35,7 +35,11 @@ router.get('/search/:title/:page*?', (req, res) => {
 			//returns the json
 			res.json(paginatedResult);
 			//saves the new shows after the response
-			TvSerie.insertNew(paginatedResult.pageResults);
+			TvSerie.saveNew(paginatedResult.pageResults).then((newSeries) => {
+				console.log("Search added " + newSeries.length + " new series to the db.");
+			}).catch((err) => {
+				console.log(err);
+			});
 		}
 	}).catch((err) => {
 		res.status(500).send("Internal error: " + err);
