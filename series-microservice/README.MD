@@ -2,14 +2,34 @@
 
 This module will offer all the API methods for interacting with TV Series and it's Episodes.
 
-## Build
+## Running locally
+
+*you must have a mongodb runnng on localhost:27017
 
 ```bash
 git clone https://github.com/rafaelrpinto/TvTracker-Backend
 cd series-microservice
 npm install
-npm test or npm start
+npm start # or npm test
 ```
+## Running with Docker
+
+```bash
+# Get the code
+git clone https://github.com/rafaelrpinto/TvTracker-Backend
+cd series-microservice
+
+# Create the microservice image
+docker build -t series-microservice:0.1 . 
+
+# Start the mongo image mapping its 27017 port to the host's 27018 (to avoid conflict)
+docker run --name testdb -p 27018:27017 -d mongo:3
+
+# Start the microservice pointing to the mongo container
+docker run --name series-microservice -p 3000:3000 -d -e MONGO_HOST=testdb -e MONGO_PORT=27018 --link testdb series-microservice:0.1
+```
+
+
 
 ## Search
 
@@ -52,5 +72,5 @@ And you will receive:
 - Authentication (jwt)
 - Logging standard to integrate with ELK
 - Helmet integration
-- Container script
+- Automate the docker deployment
 - ....
