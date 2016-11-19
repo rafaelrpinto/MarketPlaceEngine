@@ -59,9 +59,9 @@ describe('TvSerie.js', () => {
 				if (err) return done(err);
 				TvSerie.findByImdbIds(targetIds).then((newOnes) => {
 					newOnes.length.should.equal(3);
-					for (tvSerie of newOnes) {
+					newOnes.map((tvSerie) => {
 						assert(targetIds.indexOf(tvSerie.imdbId) != -1, "The meths returned the id '" + tvSerie.imdbId + "' that was not requested ");
-					}
+					});
 					done();
 				}).catch(done);
 			});

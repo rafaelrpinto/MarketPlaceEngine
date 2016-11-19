@@ -48,10 +48,8 @@ TvSerie.search = (searchParams) => {
       var receivedPageResults = responseBody.Search;
       var receivedTotalResultCount = responseBody.totalResults;
 
-
       if (Array.isArray(receivedPageResults)) {
-        for (var i = 0; i < receivedPageResults.length; i++) {
-          var searchItem = receivedPageResults[i];
+        receivedPageResults.map((searchItem) => {
           //igonore N/A posters
           if (searchItem.Poster == "N/A") {
             searchItem.Poster = null;
@@ -63,7 +61,7 @@ TvSerie.search = (searchParams) => {
             imdbId: searchItem.imdbID,
             posterLink: searchItem.Poster
           }));
-        }
+        });
       }
       //returns a paginated result
       resolve(new PaginatedResult(searchResults, searchParams.page, receivedTotalResultCount));
@@ -94,7 +92,7 @@ TvSerie.saveNew = (newOrExistingTvSeries) => {
     TvSerie.findByImdbIds(toImdbIdArray(newOrExistingTvSeries)).then((existingTvSeries) => {
       var newSeries = new Array();
       var existingImdbIds = toImdbIdArray(existingTvSeries);
-      for (let tvSerie of newOrExistingTvSeries) {
+      newOrExistingTvSeries.map((tvSerie) => {
         //if the current imdb id is not in the db....
         if (existingImdbIds.indexOf(tvSerie.imdbId) == -1) {
           //new serie, insert...
@@ -103,7 +101,7 @@ TvSerie.saveNew = (newOrExistingTvSeries) => {
           });
           newSeries.push(tvSerie);
         }
-      }
+      });
       resolve(newSeries);
     }).catch(reject);
   });
@@ -112,9 +110,9 @@ TvSerie.saveNew = (newOrExistingTvSeries) => {
 //creates an array with the imdb ids
 function toImdbIdArray(tvSeries) {
   var idArray = new Array();
-  for (let tvSerie of tvSeries) {
+  tvSeries.map((tvSerie) => {
     idArray.push(tvSerie.imdbId);
-  }
+  });
   return idArray;
 }
 
