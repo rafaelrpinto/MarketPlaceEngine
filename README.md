@@ -1,7 +1,8 @@
 # TvTracker-Backend
-Node.js backend for the future TvTracker app.
 
 [![Build Status](https://travis-ci.org/rafaelrpinto/TvTracker-Backend.svg?branch=master)](https://travis-ci.org/rafaelrpinto/TvTracker-Backend)
+
+Node.js backend for the future TvTracker app. Currently this API retrieves data from the [Open Movie Database](https://www.omdbapi.com/), but as the project moves forward I will consider plugging different sources.
 
 Still on early stages, but if you wanna run it just clone the repository and start the microservice. Ex:
 
