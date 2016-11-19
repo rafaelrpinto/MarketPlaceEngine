@@ -3,21 +3,12 @@ Node.js backend for the future TvTracker app.
 
 [![Build Status](https://travis-ci.org/rafaelrpinto/TvTracker-Backend.svg?branch=master)](https://travis-ci.org/rafaelrpinto/TvTracker-Backend)
 
-Still on early stages, but if you wanna run it just clone the repository then:
+Still on early stages, but if you wanna run it just clone the repository and start the microservice. Ex:
 
 ```bash
-cd tv-tracker-backend
+cd series-microservice
 npm install
-npm test
+npm test (optional)
 npm start
 ```
-
-Then call the search URL with your browser, postman, ...
-
-`http://localhost:3000/series/search/Walking Dead`
-
-Optionally inform a page number on the path:
-
-`http://localhost:3000/series/search/Walking Dead/2`
-
-**your local mongodb must be running
+**your local mongodb must be running onthe default port (or you can change the app config file)
