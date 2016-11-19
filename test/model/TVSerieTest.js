@@ -4,23 +4,14 @@
 var sinon = require('sinon');
 var assert = require("chai").assert;
 var should = require("chai").should();
-
-//mongo config
-//TODO: try to avoid having this configuration en every model test
-var dbURI = "mongodb://localhost/testdb";
-var mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
-var clearDB = require('mocha-mongoose')(dbURI);
+//default test coniguration
+var testConfig = require("../testConfig.js");
 
 //victim
 var TvSerie = require('../../model/TvSerie');
 
 describe('TvSerie.js', () => {
-	beforeEach(function(done) {
-		if (mongoose.connection.db) return done();
-
-		mongoose.connect(dbURI, done);
-	});
+	beforeEach(testConfig.db.beforeEach);
 
 	describe('#toJSON()', () => {
 		it('should generate json without metadata', () => {

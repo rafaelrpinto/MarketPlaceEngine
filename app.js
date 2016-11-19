@@ -1,24 +1,28 @@
+var config = require('./config');
 var express = require('express');
-var logger = require('morgan');
+//var logger = require('morgan');
 var bodyParser = require('body-parser');
 var unirest = require('unirest');
+
+//DB config
 var mongoose   = require('mongoose');
 mongoose.Promise = require('bluebird');
+mongoose.connect(config.db.uri);
 
-// Route files
-var series = require('./routes/seriesController');
+//winston logger
+var winston = require('winston');
+winston.level = (process.env.LOG_LEVEL || config.log.level );
+winston.add(winston.transports.File, { filename: config.log.filename });
 
 //Express setup
 var app = express();
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //Route definitions
+var series = require('./routes/seriesController');
 app.use('/series', series);
-
-//DB config
-mongoose.connect('mongodb://localhost:27017/tv-tracker'); // connect to our database
 
 //Models
 var TvSerie = require("./model/TvSerie");

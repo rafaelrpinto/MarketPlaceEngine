@@ -38,9 +38,9 @@ tvSerieSchema.methods.toJSON = function() {
 var TvSerie = mongoose.model('tvSerie', tvSerieSchema);
 
 //Searches for Tv Series by title
-TvSerie.search = (searchTerm, page) => {
+TvSerie.search = (searchParams) => {
   return new Promise(function(resolve, reject) {
-    OpenMovieDatabase.search(searchTerm, "series", page).then(function(responseBody) {
+    OpenMovieDatabase.search(searchParams.title, "series", searchParams.page).then(function(responseBody) {
       //converts the received data to TvSerie structure
       var searchResults = new Array();
 
@@ -66,7 +66,7 @@ TvSerie.search = (searchTerm, page) => {
         }
       }
       //returns a paginated result
-      resolve(new PaginatedResult(searchResults, page, receivedTotalResultCount));
+      resolve(new PaginatedResult(searchResults, searchParams.page, receivedTotalResultCount));
     }).catch(reject);
   });
 };
