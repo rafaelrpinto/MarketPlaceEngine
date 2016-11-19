@@ -4,12 +4,7 @@
 
 Node.js backend for the future TvTracker app. Currently this API retrieves data from the [Open Movie Database](https://www.omdbapi.com/), but as the project moves forward I will consider plugging different sources.
 
-Still on early stages, but if you wanna run it just clone the repository and start the microservice. Ex:
+## Project's Microservice API's
 
-```bash
-cd series-microservice
-npm install
-npm test (optional)
-npm start
-```
-**your local mongodb must be running onthe default port (or you can change the app config file)
+- [TV Series / Episodes](https://github.com/rafaelrpinto/TvTracker-Backend/tree/master/series-microservice)
+- More to come...
