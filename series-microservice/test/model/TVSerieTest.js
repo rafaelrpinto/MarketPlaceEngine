@@ -66,6 +66,7 @@ describe('TvSerie.js', () => {
 				}).catch(done);
 			});
 		});
+		
 		it("doesn't break with an empty collection", function(done) {
 			TvSerie.findByImdbIds(["imdbId1", "imdbId5", "imdbId10", "imdbId99"]).then((newOnes) => {
 				newOnes.length.should.equal(0);
