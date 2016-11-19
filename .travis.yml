@@ -1,5 +1,10 @@
 language: node_js
 node_js:
   - "node"
+  - "6.1.x"
+  - "6.0.x"
 services:
   - mongodb
+env:
+  - TEST_DIR=series-microservice
+script: cd $TEST_DIR && npm install && npm test  
