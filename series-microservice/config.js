@@ -5,7 +5,7 @@ var config = {};
 
 //db properties
 config.db = {
-	uri : "mongodb://localhost:27017/tv-tracker"
+	uri : "mongodb://" + (process.env.MONGO_HOST || "localhost" ) + ":" + (process.env.MONGO_HOST || "27017") + "/tv-tracker"
 };
 
 //log config
