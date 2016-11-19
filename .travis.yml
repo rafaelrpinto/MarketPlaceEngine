@@ -1,8 +1,7 @@
 language: node_js
 node_js:
   - "node"
-  - "6.1.x"
-  - "6.0.x"
+  - "6.9.x"
 services:
   - mongodb
 env:
