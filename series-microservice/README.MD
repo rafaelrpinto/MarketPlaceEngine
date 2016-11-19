@@ -2,6 +2,15 @@
 
 This module will offer all the API methods for interacting with TV Series and it's Episodes.
 
+## Build
+
+```bash
+git clone https://github.com/rafaelrpinto/TvTracker-Backend
+cd series-microservice
+npm install
+npm test or npm start
+```
+
 ## Search
 
 Searches for TV Series.
