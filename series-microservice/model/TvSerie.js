@@ -49,7 +49,7 @@ TvSerie.search = (searchParams) => {
       var receivedTotalResultCount = responseBody.totalResults;
 
       if (Array.isArray(receivedPageResults)) {
-        receivedPageResults.map((searchItem) => {
+        for (searchItem of receivedPageResults) {
           //igonore N/A posters
           if (searchItem.Poster == "N/A") {
             searchItem.Poster = null;
@@ -61,7 +61,7 @@ TvSerie.search = (searchParams) => {
             imdbId: searchItem.imdbID,
             posterLink: searchItem.Poster
           }));
-        });
+        }
       }
       //returns a paginated result
       resolve(new PaginatedResult(searchResults, searchParams.page, receivedTotalResultCount));
@@ -92,7 +92,7 @@ TvSerie.saveNew = (newOrExistingTvSeries) => {
     TvSerie.findByImdbIds(toImdbIdArray(newOrExistingTvSeries)).then((existingTvSeries) => {
       var newSeries = new Array();
       var existingImdbIds = toImdbIdArray(existingTvSeries);
-      newOrExistingTvSeries.map((tvSerie) => {
+      for (tvSerie of newOrExistingTvSeries) {
         //if the current imdb id is not in the db....
         if (existingImdbIds.indexOf(tvSerie.imdbId) == -1) {
           //new serie, insert...
@@ -101,7 +101,7 @@ TvSerie.saveNew = (newOrExistingTvSeries) => {
           });
           newSeries.push(tvSerie);
         }
-      });
+      }
       resolve(newSeries);
     }).catch(reject);
   });
@@ -110,9 +110,9 @@ TvSerie.saveNew = (newOrExistingTvSeries) => {
 //creates an array with the imdb ids
 function toImdbIdArray(tvSeries) {
   var idArray = new Array();
-  tvSeries.map((tvSerie) => {
+  for (tvSerie of tvSeries) {
     idArray.push(tvSerie.imdbId);
-  });
+  }
   return idArray;
 }
 

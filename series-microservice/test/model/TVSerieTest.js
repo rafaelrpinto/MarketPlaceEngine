@@ -59,14 +59,14 @@ describe('TvSerie.js', () => {
 				if (err) return done(err);
 				TvSerie.findByImdbIds(targetIds).then((newOnes) => {
 					newOnes.length.should.equal(3);
-					newOnes.map((tvSerie) => {
+					for (tvSerie of newOnes) {
 						assert(targetIds.indexOf(tvSerie.imdbId) != -1, "The meths returned the id '" + tvSerie.imdbId + "' that was not requested ");
-					});
+					}
 					done();
 				}).catch(done);
 			});
 		});
-		
+
 		it("doesn't break with an empty collection", function(done) {
 			TvSerie.findByImdbIds(["imdbId1", "imdbId5", "imdbId10", "imdbId99"]).then((newOnes) => {
 				newOnes.length.should.equal(0);
