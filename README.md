@@ -12,7 +12,7 @@ git clone https://github.com/rafaelrpinto/TvTracker-Backend
 docker-compose up
 ```
 
-Check each microservice README to see how to test it or runt it individually.
+Check each microservice README to see how to test it or run it individually.
 
 ## Project's Microservice API's
 
