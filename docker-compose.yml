@@ -1,0 +1,17 @@
+version: "2"
+services:
+# MongoDB image  
+  testdb:
+    image: mongo
+    ports:
+      - "27018:27017"
+#Series microservice image      
+  series-microservice:
+    build: ./series-microservice
+    ports:
+      - "3000:3000"
+    links:
+      - testdb
+    environment:
+      - MONGO_HOST=testdb
+      - MONGO_PORT=27018
