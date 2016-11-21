@@ -46,7 +46,7 @@ router.get('/search/:title/:page*?', (req, res) => {
 			});
 		}
 	}).catch((err) => {
-		winston.error("Error searching by title: " + err + " : ", searchParams);
+		winston.error("Error searching series by title", searchParams);
 		res.status(500).send("Internal error.");
 	});
 });

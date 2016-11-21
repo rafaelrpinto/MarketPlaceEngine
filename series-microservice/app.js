@@ -24,7 +24,4 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var series = require('./routes/seriesController');
 app.use('/series', series);
 
-//Models
-var TvSerie = require("./model/TvSerie");
-
 module.exports = app;

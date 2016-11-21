@@ -36,9 +36,10 @@ describe('OpenMovieDatabase.js', () => {
 				Error: "OMDB error"
 			}
 		});
-		it("Return totalResults = 0 instead of raising an error", () => {
+		it("Return totalResults = 0 instead of raising an error", (done) => {
 			var callback = (response) => {
 				assert(response.totalResults == 0, "Total results should have been 0");
+				done();
 			};
 			var mockResponse = {
 				headers: {
@@ -50,7 +51,7 @@ describe('OpenMovieDatabase.js', () => {
 			};
 			successTestTemplate(callback, mockResponse);
 		});
-		it("Search results found.", () => {
+		it("Search results found.", (done) => {
 			var mockResponse = {
 				headers: {
 					"content-type": "application/json"
@@ -79,6 +80,7 @@ describe('OpenMovieDatabase.js', () => {
 				assert(response.Search.length == 2, "The search results must have 2 elements");
 				assert(response.Search[0].Title == mockResponse.body.Search[0].Title, "[0] Responses not matching!");
 				assert(response.Search[1].Title == mockResponse.body.Search[1].Title, "[1] Responses not matching!");
+				done();
 			};
 			successTestTemplate(callback, mockResponse);
 		});
@@ -89,7 +91,7 @@ describe('OpenMovieDatabase.js', () => {
 //success test template
 function successTestTemplate(callback, mockResponse) {
 	mockHttpResponse(mockResponse);
-	return OpenMovieDatabase.search("doesn't", 'matter', 1)
+	OpenMovieDatabase.search("doesn't", 'matter', 1)
 		.then(callback)
 		.catch(function(err) {
 			assert.fail(1, 0, 'Should not have raised the exception: ' + err)
@@ -98,15 +100,15 @@ function successTestTemplate(callback, mockResponse) {
 
 // error test template
 function errorTestTemplate(expectedError, mockResponse) {
-	it('Should raise: ' + expectedError, () => {
+	it('Should raise: ' + expectedError, (done) => {
 		mockHttpResponse(mockResponse);
-		return OpenMovieDatabase.search("doesn't", 'matter', 1)
+		OpenMovieDatabase.search("doesn't", 'matter', 1)
 			.then(() => {
-				assert.fail(1, 0, 'No error was thrown when it should have been')
-
+				assert.fail(1, 0, 'No error was thrown when it should have been');
 			})
 			.catch(function(err) {
 				assert(err == expectedError, "Received wrong exception: " + err);
+				done();
 			});
 	});
 }

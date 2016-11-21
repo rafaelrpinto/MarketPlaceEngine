@@ -14,7 +14,7 @@ describe('TvSerie.js', () => {
 	beforeEach(testConfig.db.beforeEach);
 
 	describe('#toJSON()', () => {
-		it('should generate json without metadata', () => {
+		it('should generate json without metadata', (done) => {
 			var serie = new TvSerie({
 				title: "Some tile",
 				imdbId: "Some id",
@@ -23,6 +23,7 @@ describe('TvSerie.js', () => {
 			var expectedJson = '{"title":"Some tile","imdbId":"Some id","posterLink":"some link"}';
 			var generatedJson = JSON.stringify(serie);
 			assert(expectedJson == generatedJson, "Unexpected json generated");
+			done();
 		});
 	});
 
@@ -55,8 +56,7 @@ describe('TvSerie.js', () => {
 		it("can be listed by imdbId", function(done) {
 			var newSeries = generateTvSeries(10);
 			var targetIds = ["imdbId1", "imdbId5", "imdbId10", "imdbId99"];
-			TvSerie.create(newSeries, (err, model) => {
-				if (err) return done(err);
+			TvSerie.create(newSeries).then((model) => {
 				TvSerie.findByImdbIds(targetIds).then((newOnes) => {
 					newOnes.length.should.equal(3);
 					for (tvSerie of newOnes) {
@@ -64,7 +64,7 @@ describe('TvSerie.js', () => {
 					}
 					done();
 				}).catch(done);
-			});
+			}).catch(done);
 		});
 
 		it("doesn't break with an empty collection", function(done) {
@@ -75,7 +75,31 @@ describe('TvSerie.js', () => {
 		});
 	});
 
+	describe('#saveNew()', () => {
+		it("should save only the new items", function(done) {
+			var genSeries = generateTvSeries(10);
+			var genExisting = genSeries.splice(0,5);
+			var genNew = genSeries.splice(5);
 
+			TvSerie.create(genExisting).then((model) => {
+				TvSerie.saveNew(genSeries).then((newSeries) => {
+					for(genSerie of genNew) {
+						var found = false;
+						for(newSerie of newSeries) {
+							if(genSerie.imdbId == newSerie.imdbId) {
+								found = true;
+								break;
+							}
+						}
+						assert(found, "Should have found the imdbId '" + genSerie.imdbId + "' on the new series list.");
+					}
+					done();
+				}).catch(done);
+			}).catch(done);
+		});
+	});
+
+	//TODO: more tests with invalid parameters
 });
 
 //generates tv series

@@ -89,21 +89,25 @@ TvSerie.findByImdbIds = (imdbIds) => {
 // inserts the tv shows thar aren't already in the database.
 TvSerie.saveNew = (newOrExistingTvSeries) => {
   return new Promise((resolve, reject) => {
-    TvSerie.findByImdbIds(toImdbIdArray(newOrExistingTvSeries)).then((existingTvSeries) => {
-      var newSeries = new Array();
-      var existingImdbIds = toImdbIdArray(existingTvSeries);
-      for (tvSerie of newOrExistingTvSeries) {
-        //if the current imdb id is not in the db....
-        if (existingImdbIds.indexOf(tvSerie.imdbId) == -1) {
-          //new serie, insert...
-          tvSerie.save().catch((err) => {
-            reject("Error saving serie with imdb id: " + tvSerie.imdbId + ": " + err);
-          });
-          newSeries.push(tvSerie);
+    if (!Array.isArray(newOrExistingTvSeries)) {
+      reject("saveNew only accepts arrays.(" + newOrExistingTvSeries + ")");
+    } else {
+      TvSerie.findByImdbIds(toImdbIdArray(newOrExistingTvSeries)).then((existingTvSeries) => {
+        var newSeries = new Array();
+        var existingImdbIds = toImdbIdArray(existingTvSeries);
+        for (tvSerie of newOrExistingTvSeries) {
+          //if the current imdb id is not in the db....
+          if (existingImdbIds.indexOf(tvSerie.imdbId) == -1) {
+            //new serie, insert...
+            tvSerie.save().catch((err) => {
+              reject("Error saving serie with imdb id: " + tvSerie.imdbId + ": " + err);
+            });
+            newSeries.push(tvSerie);
+          }
         }
-      }
-      resolve(newSeries);
-    }).catch(reject);
+        resolve(newSeries);
+      }).catch(reject);
+    }
   });
 }
 

@@ -10,8 +10,8 @@ config.db = {
 
 //log config
 config.log = {
-	level : "debug",
-	filename : "tv-tracker.log"
+	level : (process.env.LOG_LEVEL || "debug" ),
+	filename : (process.env.LOG_FILE_NAME || "tv-tracker.log" )
 };
 
 module.exports = config;
