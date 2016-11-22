@@ -85,10 +85,13 @@ And you will receive:
   "releaseDate": "2008-01-20T00:00:00.000Z",
   "writer": "Vince Gilligan",
   "plot": "A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family's future.",
-  "language": "English, Spanish",
   "country": "USA",
   "imdbRating": 9.5,
   "totalSeasons": 5,
+  "languages": [
+    "English",
+    " Spanish"
+  ],
   "actors": [
     "Bryan Cranston",
     " Anna Gunn",
