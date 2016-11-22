@@ -1,8 +1,15 @@
 {
   "name": "tv-tracker-backend",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Rafael Pinto <raprp@posteo.de>",
   "private": true,
+  "repository" : {
+  	"type" : "git",
+  	"url" : "https://github.com/rafaelrpinto/TvTracker-Backend"
+  },
+  "bugs" : {
+  	"url" : "https://github.com/rafaelrpinto/TvTracker-Backend/issues"
+  },
   "scripts": {
     "start": "node ./bin/www",
     "test": "mocha"
@@ -22,5 +29,6 @@
     "chai": "3.5.0",
     "sinon": "1.17.6",
     "mocha-mongoose": "1.2.0"
-  }
+  },
+  "license" : "MIT"
 }
