@@ -69,7 +69,7 @@ And you will receive:
 
 ## Search by IMDB Id
 
-Searches for TV Series based on the informed title.
+Searches for TV Series based on it's IMDB Id.
 
 `http://localhost:3000/series/tt0903747`
 
