@@ -74,5 +74,4 @@ And you will receive:
 - Authentication (jwt)
 - Logging standard to integrate with ELK
 - Helmet integration
-- Automate the docker deployment
 - ....
