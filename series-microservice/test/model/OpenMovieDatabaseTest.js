@@ -84,6 +84,8 @@ describe('OpenMovieDatabase.js', () => {
 			};
 			successTestTemplate(callback, mockResponse);
 		});
+
+		//TODO: increase test coverage
 	});
 });
 

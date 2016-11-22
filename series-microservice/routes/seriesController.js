@@ -41,14 +41,9 @@ router.get('/search/:title/:page*?', (req, res) => {
 		} else {
 			//returns the json
 			res.json(paginatedResult);
-			//saves the new shows after the response
-			TvSerie.saveNew(paginatedResult.pageResults).then((newSeries) => {
-				winston.debug("Search added " + newSeries.length + " new series to the db : ", searchParams);
-			}).catch((err) => {
-				winston.error("Error saving series after search: " + err + " : ", searchParams);
-			});
 		}
 	}).catch((err) => {
+		searchParams.stack = err.stack;
 		winston.error("Error searching series by title", searchParams);
 		res.status(500).send("Internal error.");
 	});
@@ -76,8 +71,9 @@ router.get('/:imdbId', (req, res) => {
 			res.json(tvSerie);	
 		}
 	}).catch((err) => {
-		winston.error("Error searching for serie by IMDB id  : " + err + " : ", {
-			imdbId: imdbId
+		winston.error("Error searching for serie by IMDB id", {
+			imdbId: imdbId,
+			stack : err.stack
 		});
 		res.status(500).send("Internal error.");
 	});

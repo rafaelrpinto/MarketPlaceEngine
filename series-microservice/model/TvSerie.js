@@ -1,24 +1,47 @@
-var OpenMovieDatabase = require('./OpenMovieDatabase');
-var PaginatedResult = require('./PaginatedResult');
+//db libs
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+// model dependencies
+var OpenMovieDatabase = require('./OpenMovieDatabase');
+var PaginatedResult = require('./PaginatedResult');
+// util libs
+var moment = require('moment');
+var winston = require('winston');
+
+
+const NO_DATA_FIELD_VALUE = "N/A";
 
 /*
   Entity that represents a TV Serie.
 */
 var tvSerieSchema = new Schema({
+  //basic data
   title: String,
   imdbId: {
     type: String,
     index: true
   },
+  // additional data  
   description: String,
   posterLink: String,
-  metadataComplete: {
-    type: Boolean,
-    default: false,
-    index: true
+  startYear: Number,
+  endYear: Number,
+  releaseDate: Date,
+  genres: {
+    type: Array,
+    "default": []
   },
+  actors: {
+    type: Array,
+    "default": []
+  },
+  director: String,
+  writer: String,
+  plot: String,
+  language: String,
+  country: String,
+  imdbRating: Number,
+  totalSeasons: Number,
   lastUpdate: {
     type: Date,
     default: Date.now,
@@ -26,12 +49,27 @@ var tvSerieSchema = new Schema({
   }
 });
 
-//Removes some details from the json representation
+// check if this row requires an update from OMDB
+tvSerieSchema.methods.isUpdateRequired = function() {
+  //30 days passed from the last update
+  return moment(this.lastUpdate).add(30, "days").isBefore(moment());
+};
+
+//Removes some details from the json representation and null values
 tvSerieSchema.methods.toJSON = function() {
   var obj = this.toObject();
+  //removes intenal details
   delete obj._id;
-  delete obj.metadataComplete;
+  delete obj.__v;
   delete obj.lastUpdate;
+
+  // removes null / empty array values
+  for (var field in obj) {
+    if (obj[field] === null || (Array.isArray(obj[field]) && obj[field].length == 0)) {
+      delete obj[field];
+    }
+  }
+
   return obj
 }
 
@@ -50,17 +88,9 @@ TvSerie.search = (searchParams) => {
 
       if (Array.isArray(receivedPageResults)) {
         for (searchItem of receivedPageResults) {
-          //igonore N/A posters
-          if (searchItem.Poster == "N/A") {
-            searchItem.Poster = null;
-          }
-
           //converts and adds the search result to the list
-          searchResults.push(new TvSerie({
-            title: searchItem.Title,
-            imdbId: searchItem.imdbID,
-            posterLink: searchItem.Poster
-          }));
+          var tvSerieData = obdb2schema(searchItem);
+          searchResults.push(new TvSerie(tvSerieData));
         }
       }
       //returns a paginated result
@@ -72,57 +102,136 @@ TvSerie.search = (searchParams) => {
 //Searches for Tv Series by IMDB id
 TvSerie.findByImdbId = (imdbId) => {
   return new Promise(function(resolve, reject) {
-    OpenMovieDatabase.findByImdbId(imdbId).then(function(responseBody) {
-      //TODO: convert OMDB's objetc to the schema
-      resolve(responseBody);
+    //search the imdb id in the database
+    TvSerie.findByImdbIdInDb(imdbId).then((existingDbSerie) => {
+      var exists = (existingDbSerie != null);
+      //if it it does not exists or is outdated
+      if (!exists || existingDbSerie.isUpdateRequired()) {
+        winston.debug("[" + imdbId + "] Serie isn't in the DB or it's outdated. Fetching from OMDB...");
+        //we search OMDB for it
+        OpenMovieDatabase.findByImdbId(imdbId).then(function(responseBody) {
+          if (responseBody) {
+            winston.debug("[" + imdbId + "] Received fresh serie data from OMDB. Saving in the DB...");
+
+            //we convert the received result
+            var tvSerieData = obdb2schema(responseBody);
+
+            //if it already exists in the DB
+            if (exists) {
+              winston.debug("[" + imdbId + "] There is already a row in the DB. Updating...");
+              existingDbSerie.update(tvSerieData).then(() => {
+                resolve(existingDbSerie);
+              }).catch(reject);
+            } else {
+              new TvSerie(tvSerieData).save().then(resolve).catch(reject);
+            }
+          } else {
+            //no result from OMDB
+            winston.debug("[" + imdbId + "] IMDB id not found on OMDB.");
+
+            if (exists) {
+              //but we have a row in the db, so we update the updateDate to postpone the next refresh and return out object
+              winston.debug("[" + imdbId + "] Refreshing updateDate and returining existing row...");
+              existingDbSerie.update({
+                $set: {
+                  lastUpdate: new Date()
+                }
+              }).catch(reject);
+            }
+
+            //can be null
+            resolve(existingDbSerie);
+          }
+        }).catch(reject);
+      } else {
+        //existing and up-to-date
+        winston.debug("[" + imdbId + "] Found up-to-date entry in the DB. Returning it...");
+        resolve(existingDbSerie);
+      }
     }).catch(reject);
   });
 };
 
+// DB methods
 
-// retrieves the series by their imdb id from the database
-TvSerie.findByImdbIdsInDb = (imdbIds) => {
+// retrieves the serie by it's imdb id from the database
+TvSerie.findByImdbIdInDb = (imdbId) => {
   return new Promise((resolve, reject) => {
-    if (!Array.isArray(imdbIds)) {
+    if (!imdbId) {
       reject("Invalid paameter for findByImdbIdsInDb");
     } else {
-      TvSerie.find({
-        "imdbId": {
-          $in: imdbIds
-        }
-      }).exec().then((results) => {
-        resolve(results);
+      TvSerie.findOne({
+        "imdbId": imdbId
+      }).exec().then((result) => {
+        resolve(result);
       }).catch(reject);
     }
   });
 }
 
-// inserts the tv shows thar aren't already in the database.
-TvSerie.saveNew = (newOrExistingTvSeries) => {
-  return new Promise((resolve, reject) => {
-    if (!Array.isArray(newOrExistingTvSeries)) {
-      reject("saveNew only accepts arrays.(" + newOrExistingTvSeries + ")");
-    } else {
-      TvSerie.findByImdbIdsInDb(toImdbIdArray(newOrExistingTvSeries)).then((existingTvSeries) => {
-        var newSeries = new Array();
-        var existingImdbIds = toImdbIdArray(existingTvSeries);
-        for (tvSerie of newOrExistingTvSeries) {
-          //if the current imdb id is not in the db....
-          if (existingImdbIds.indexOf(tvSerie.imdbId) == -1) {
-            //new serie, insert...
-            tvSerie.save().catch((err) => {
-              reject("Error saving serie with imdb id: " + tvSerie.imdbId + ": " + err);
-            });
-            newSeries.push(tvSerie);
-          }
-        }
-        resolve(newSeries);
-      }).catch(reject);
+//helper functions
+
+// converts from the OMDB structure to TvSerie schema
+function obdb2schema(omdbTvSerie) {
+
+  if (!omdbTvSerie) {
+    return null;
+  }
+
+  //year conversion
+  var year = omdbTvSerie.Year;
+  var startYear = null;
+  var endYear = null;
+  if (year) {
+    startYear = year.substring(0, 4);
+    if (year.length > 5) {
+      endYear = year.substring(5);
     }
-  });
+  }
+
+  //release date conversion
+  var releaseDate = null;
+  if (omdbTvSerie.Released) {
+    releaseDate = moment(omdbTvSerie.Released, "DD MMM YYYY", true).format("YYYY-MM-DD");
+  }
+
+  return {
+    title: omdbTvSerie.Title,
+    imdbId: omdbTvSerie.imdbID,
+    posterLink: getNullableOmbdFieldValue(omdbTvSerie.Poster),
+    startYear: startYear,
+    endYear: endYear,
+    releaseDate: releaseDate,
+    genres: getSplitOmbdFieldValue(omdbTvSerie.Genre),
+    actors: getSplitOmbdFieldValue(omdbTvSerie.Actors),
+    director: getNullableOmbdFieldValue(omdbTvSerie.Director),
+    writer: getNullableOmbdFieldValue(omdbTvSerie.Writer),
+    plot: getNullableOmbdFieldValue(omdbTvSerie.Plot),
+    language: getNullableOmbdFieldValue(omdbTvSerie.Language),
+    country: getNullableOmbdFieldValue(omdbTvSerie.Country),
+    imdbRating: getNullableOmbdFieldValue(omdbTvSerie.imdbRating),
+    totalSeasons: getNullableOmbdFieldValue(omdbTvSerie.totalSeasons),
+    lastUpdate: new Date()
+  };
 }
 
-//creates an array with the imdb ids
+// gets an array from a field value
+function getSplitOmbdFieldValue(field) {
+  if (field && field != NO_DATA_FIELD_VALUE) {
+    return field.split(",");
+  }
+  return [];
+}
+
+// gets a nullable value
+function getNullableOmbdFieldValue(field) {
+  if (field && field != NO_DATA_FIELD_VALUE) {
+    return field;
+  }
+  return null;
+}
+
+//generates an array with imdb ids
 function toImdbIdArray(tvSeries) {
   var idArray = new Array();
   for (tvSerie of tvSeries) {
