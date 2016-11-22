@@ -12,7 +12,7 @@ cd series-microservice
 npm install
 npm start # or npm test
 ```
-### Running each image with Docker
+### Using docker (manually creating the containers)
 
 ```bash
 # Get the code
@@ -28,7 +28,7 @@ docker run --name testdb -p 27018:27017 -d mongo:3
 # Start the microservice pointing to the mongo container
 docker run --name series-microservice -p 3000:3000 -d -e MONGO_HOST=testdb -e MONGO_PORT=27018 --link testdb series-microservice:0.1
 ```
-### Running everything with docker-compose
+### Using docker-compose (automatically running all the containers)
 
 [See here](https://github.com/rafaelrpinto/TvTracker-Backend/blob/master/README.md)
 
