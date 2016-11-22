@@ -69,11 +69,22 @@ TvSerie.search = (searchParams) => {
   });
 };
 
-// retrieves the series by their imdb id
-TvSerie.findByImdbIds = (imdbIds) => {
+//Searches for Tv Series by IMDB id
+TvSerie.findByImdbId = (imdbId) => {
+  return new Promise(function(resolve, reject) {
+    OpenMovieDatabase.findByImdbId(imdbId).then(function(responseBody) {
+      //TODO: convert OMDB's objetc to the schema
+      resolve(responseBody);
+    }).catch(reject);
+  });
+};
+
+
+// retrieves the series by their imdb id from the database
+TvSerie.findByImdbIdsInDb = (imdbIds) => {
   return new Promise((resolve, reject) => {
     if (!Array.isArray(imdbIds)) {
-      reject("Invalid paameter for findByImdbIds");
+      reject("Invalid paameter for findByImdbIdsInDb");
     } else {
       TvSerie.find({
         "imdbId": {
@@ -92,7 +103,7 @@ TvSerie.saveNew = (newOrExistingTvSeries) => {
     if (!Array.isArray(newOrExistingTvSeries)) {
       reject("saveNew only accepts arrays.(" + newOrExistingTvSeries + ")");
     } else {
-      TvSerie.findByImdbIds(toImdbIdArray(newOrExistingTvSeries)).then((existingTvSeries) => {
+      TvSerie.findByImdbIdsInDb(toImdbIdArray(newOrExistingTvSeries)).then((existingTvSeries) => {
         var newSeries = new Array();
         var existingImdbIds = toImdbIdArray(existingTvSeries);
         for (tvSerie of newOrExistingTvSeries) {

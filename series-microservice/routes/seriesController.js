@@ -24,7 +24,10 @@ router.get('/search/:title/:page*?', (req, res) => {
 		}
 	}
 
-	var searchParams = { title : title, page : page };
+	var searchParams = {
+		title: title,
+		page: page
+	};
 
 	//Searches for series according to the path parameter
 	TvSerie.search(searchParams).then((paginatedResult) => {
@@ -50,5 +53,36 @@ router.get('/search/:title/:page*?', (req, res) => {
 		res.status(500).send("Internal error.");
 	});
 });
+
+/*
+	Searches for a TV Series title on OMDB.
+*/
+router.get('/:imdbId', (req, res) => {
+	var imdbId = req.params.imdbId;
+
+	//check the imdbId
+	if (!imdbId || imdbId.trim().length == 0) {
+		res.status(400).send("Invalid IMDB id.");
+		return;
+	}
+
+	TvSerie.findByImdbId(imdbId).then((tvSerie) => {
+		if (!tvSerie) {
+			var msg = "Tv Serie with IMDB id '" + imdbId + "' not found!";
+			res.status(404).send(msg);
+			winston.debug(msg);
+		} else {
+			//returns the json
+			res.json(tvSerie);	
+		}
+	}).catch((err) => {
+		winston.error("Error searching for serie by IMDB id  : " + err + " : ", {
+			imdbId: imdbId
+		});
+		res.status(500).send("Internal error.");
+	});
+
+});
+
 
 module.exports = router;

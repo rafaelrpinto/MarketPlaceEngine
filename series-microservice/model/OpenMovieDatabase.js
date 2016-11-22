@@ -27,6 +27,22 @@ OpenMovieDatabase.search = (searchTerm, searchType, page) => {
 }
 
 /*
+	Retrieves a title by it's IMDB id.
+*/
+OpenMovieDatabase.findByImdbId = (imdbId) => {
+
+	//TODO: basic validation of the received params
+
+	return new Promise((resolve, reject) => {
+		var params = '?i=' + imdbId;
+		return httpClient.get(OMDB_API_URL, params, (response) => {
+			parseOmdbResponse(response, resolve, reject);
+		});
+
+	});
+}
+
+/*
 	Private function to apply the same processing/validation to all OMDB responses.
 */
 function parseOmdbResponse(response, resolve, reject) {
@@ -42,9 +58,10 @@ function parseOmdbResponse(response, resolve, reject) {
 			} else if (response.body.Error) {
 				if (response.body.Error == "Movie not found!") {
 					//no resutls, but no internal error
-					resolve({
-						totalResults: 0
-					});
+					resolve({ totalResults: 0 });
+				} if (response.body.Error == "Incorrect IMDb ID.") {
+					//no resutls, but no internal error
+					resolve(null);
 				} else {
 					throw "OMDB returned an error message : '" + response.body.Error + "'";
 				}
