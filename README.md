@@ -9,6 +9,7 @@ Node.js backend for the future TvTracker app. Currently this API retrieves data 
 ```bash
 # Get the code
 git clone https://github.com/rafaelrpinto/TvTracker-Backend
+cd TvTracker-Backend
 docker-compose up
 ```
 
