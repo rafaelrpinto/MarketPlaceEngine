@@ -18,7 +18,8 @@ describe('TvSerie.js', () => {
 			var serie = new TvSerie({
 				title: "Some tile",
 				imdbId: "Some id",
-				posterLink: null
+				posterLink: null,
+				actors : []
 			});
 			var expectedJson = '{"title":"Some tile","imdbId":"Some id"}';
 			var generatedJson = JSON.stringify(serie);
@@ -51,7 +52,14 @@ describe('TvSerie.js', () => {
 		});
 	});
 
-	//TODO: increase test coverage
+	describe('#search()', () => {
+		//TODO
+	});
+
+	describe('#findByImdbId()', () => {
+		//TODO
+	});
+
 });
 
 //generates tv series
