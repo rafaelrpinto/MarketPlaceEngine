@@ -33,9 +33,9 @@ docker run --name series-microservice -p 3000:3000 -d -e MONGO_HOST=testdb -e MO
 [See here](https://github.com/rafaelrpinto/TvTracker-Backend/blob/master/README.md)
 
 
-## Search
+## Search by Title
 
-Searches for TV Series.
+Searches for TV Series based on the informed title.
 
 `http://localhost:3000/series/search/Walking Dead`
 
@@ -67,9 +67,47 @@ And you will receive:
 }
 ```
 
+## Search by IMDB Id
+
+Searches for TV Series based on it's IMDB Id.
+
+`http://localhost:3000/series/tt0903747`
+
+And you will receive:
+
+```javascript
+{
+  "title": "Breaking Bad",
+  "imdbId": "tt0903747",
+  "posterLink": "https://images-na.ssl-images-amazon.com/images/M/MV5BMTQ0ODYzODc0OV5BMl5BanBnXkFtZTgwMDk3OTcyMDE@._V1_SX300.jpg",
+  "startYear": 2008,
+  "endYear": 2013,
+  "releaseDate": "2008-01-20T00:00:00.000Z",
+  "writer": "Vince Gilligan",
+  "plot": "A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family's future.",
+  "country": "USA",
+  "imdbRating": 9.5,
+  "totalSeasons": 5,
+  "languages": [
+    "English",
+    " Spanish"
+  ],
+  "actors": [
+    "Bryan Cranston",
+    " Anna Gunn",
+    " Aaron Paul",
+    " Dean Norris"
+  ],
+  "genres": [
+    "Crime",
+    " Drama",
+    " Thriller"
+  ]
+}
+```
+
 ## TODO
 
-- Detailed search by IMDB id
 - Episode search
 - Authentication (jwt)
 - Logging standard to integrate with ELK
