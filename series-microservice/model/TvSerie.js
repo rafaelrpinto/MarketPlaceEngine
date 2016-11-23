@@ -38,7 +38,10 @@ var tvSerieSchema = new Schema({
   director: String,
   writer: String,
   plot: String,
-  language: String,
+  languages: {
+    type: Array,
+    "default": []
+  },
   country: String,
   imdbRating: Number,
   totalSeasons: Number,
@@ -207,7 +210,7 @@ function obdb2schema(omdbTvSerie) {
     director: getNullableOmbdFieldValue(omdbTvSerie.Director),
     writer: getNullableOmbdFieldValue(omdbTvSerie.Writer),
     plot: getNullableOmbdFieldValue(omdbTvSerie.Plot),
-    language: getNullableOmbdFieldValue(omdbTvSerie.Language),
+    languages: getSplitOmbdFieldValue(omdbTvSerie.Language),
     country: getNullableOmbdFieldValue(omdbTvSerie.Country),
     imdbRating: getNullableOmbdFieldValue(omdbTvSerie.imdbRating),
     totalSeasons: getNullableOmbdFieldValue(omdbTvSerie.totalSeasons),
