@@ -1,3 +1,5 @@
+"use strict"
+
 //db libs
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -139,11 +141,11 @@ TvSerie.findByImdbId = (imdbId) => {
                 $set: {
                   lastUpdate: new Date()
                 }
-              }).catch(reject);
+              }).then(resolve).catch(reject);
+            } else {
+              //nothing on OMDB and our DB
+              resolve(null);
             }
-
-            //can be null
-            resolve(existingDbSerie);
           }
         }).catch(reject);
       } else {
@@ -232,15 +234,6 @@ function getNullableOmbdFieldValue(field) {
     return field;
   }
   return null;
-}
-
-//generates an array with imdb ids
-function toImdbIdArray(tvSeries) {
-  var idArray = new Array();
-  for (tvSerie of tvSeries) {
-    idArray.push(tvSerie.imdbId);
-  }
-  return idArray;
 }
 
 module.exports = TvSerie;

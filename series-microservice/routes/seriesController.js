@@ -1,3 +1,5 @@
+"use strict"
+
 var TvSerie = require('../model/TvSerie');
 var express = require('express');
 var router = express.Router();

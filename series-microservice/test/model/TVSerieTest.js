@@ -1,3 +1,5 @@
+"use strict"
+
 /*
 	Test case for TvSerie.js
 */
@@ -9,6 +11,10 @@ var testConfig = require("../testConfig.js");
 
 //victim
 var TvSerie = require('../../model/TvSerie');
+
+//dependencies
+var OpenMovieDatabase = require('../../model/OpenMovieDatabase');
+var PaginatedResult = require('../../model/PaginatedResult');
 
 describe('TvSerie.js', () => {
 	beforeEach(testConfig.db.beforeEach);
@@ -53,14 +59,26 @@ describe('TvSerie.js', () => {
 	});
 
 	describe('#search()', () => {
-		//TODO
 	});
 
-	describe('#findByImdbId()', () => {
-		//TODO
+	describe('#findByImdbId()', (done) => {
 	});
 
 });
+
+//mocks the http client to return a specific response
+function mockOMDBResponse(response) {
+
+	//removes the previous mock to use a different response
+	if (OpenMovieDatabase.search.restore) {
+		OpenMovieDatabase.search.restore();
+	}
+
+	//forces httpClient.get to always return the specified response
+	sinon.stub(OpenMovieDatabase, 'search', (title, type, page, callback) => {
+		callback(response);
+	});
+}
 
 //generates tv series
 function generateTvSeries(quantity) {

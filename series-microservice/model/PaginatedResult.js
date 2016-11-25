@@ -1,3 +1,5 @@
+"use strict"
+
 /*
 	Class that organizes a paginated search/query result.
 */

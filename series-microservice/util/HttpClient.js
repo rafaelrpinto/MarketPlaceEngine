@@ -1,3 +1,5 @@
+"use strict"
+
 var unirest = require('unirest');
 
 /*
