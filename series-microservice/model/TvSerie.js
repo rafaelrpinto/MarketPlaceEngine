@@ -23,7 +23,7 @@ var tvSerieSchema = new Schema({
     type: String,
     index: true
   },
-  // additional data  
+  // additional data
   description: String,
   posterLink: String,
   startYear: Number,
@@ -92,7 +92,7 @@ TvSerie.search = (searchParams) => {
       var receivedTotalResultCount = responseBody.totalResults;
 
       if (Array.isArray(receivedPageResults)) {
-        for (searchItem of receivedPageResults) {
+        for (let searchItem of receivedPageResults) {
           //converts and adds the search result to the list
           var tvSerieData = obdb2schema(searchItem);
           searchResults.push(new TvSerie(tvSerieData));
