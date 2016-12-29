@@ -11,6 +11,7 @@ function OpenMovieDatabase() {
 
 // constants
 const OMDB_API_URL = "http://www.omdbapi.com/";
+const NO_DATA_FIELD_VALUE = "N/A";
 
 /*
 	Searches for a Tv Serie on  OMDB.
@@ -41,9 +42,6 @@ OpenMovieDatabase.searchEpisodes = (serieImdbId, seasonNumber) => {
 	Retrieves a title by it's IMDB id.
 */
 OpenMovieDatabase.findByImdbId = (imdbId) => {
-
-	//TODO: basic validation of the received params
-
 	return new Promise((resolve, reject) => {
 		var params = '?i=' + imdbId;
 		return httpClient.get(OMDB_API_URL, params, (response) => {
@@ -51,6 +49,23 @@ OpenMovieDatabase.findByImdbId = (imdbId) => {
 		});
 
 	});
+}
+
+// gets an array from a field value
+OpenMovieDatabase.getSplitOmbdFieldValue = (field) => {
+	//FIXME trim each entry
+  if (field && field != NO_DATA_FIELD_VALUE) {
+    return field.split(",");
+  }
+  return [];
+}
+
+// gets a nullable value
+OpenMovieDatabase.getNullableOmbdFieldValue = (field) => {
+  if (field && field != NO_DATA_FIELD_VALUE) {
+    return field;
+  }
+  return null;
 }
 
 /*

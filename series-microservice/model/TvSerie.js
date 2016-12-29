@@ -10,9 +10,6 @@ var PaginatedResult = require('./PaginatedResult');
 var moment = require('moment');
 var winston = require('winston');
 
-
-const NO_DATA_FIELD_VALUE = "N/A";
-
 /*
   Entity that represents a TV Serie.
 */
@@ -203,37 +200,21 @@ function obdb2schema(omdbTvSerie) {
   return {
     title: omdbTvSerie.Title,
     imdbId: omdbTvSerie.imdbID,
-    posterLink: getNullableOmbdFieldValue(omdbTvSerie.Poster),
+    posterLink: OpenMovieDatabase.getNullableOmbdFieldValue(omdbTvSerie.Poster),
     startYear: startYear,
     endYear: endYear,
     releaseDate: releaseDate,
-    genres: getSplitOmbdFieldValue(omdbTvSerie.Genre),
-    actors: getSplitOmbdFieldValue(omdbTvSerie.Actors),
-    director: getNullableOmbdFieldValue(omdbTvSerie.Director),
-    writer: getNullableOmbdFieldValue(omdbTvSerie.Writer),
-    plot: getNullableOmbdFieldValue(omdbTvSerie.Plot),
-    languages: getSplitOmbdFieldValue(omdbTvSerie.Language),
-    country: getNullableOmbdFieldValue(omdbTvSerie.Country),
-    imdbRating: getNullableOmbdFieldValue(omdbTvSerie.imdbRating),
-    totalSeasons: getNullableOmbdFieldValue(omdbTvSerie.totalSeasons),
+    genres: OpenMovieDatabase.getSplitOmbdFieldValue(omdbTvSerie.Genre),
+    actors: OpenMovieDatabase.getSplitOmbdFieldValue(omdbTvSerie.Actors),
+    director: OpenMovieDatabase.getNullableOmbdFieldValue(omdbTvSerie.Director),
+    writer: OpenMovieDatabase.getNullableOmbdFieldValue(omdbTvSerie.Writer),
+    plot: OpenMovieDatabase.getNullableOmbdFieldValue(omdbTvSerie.Plot),
+    languages: OpenMovieDatabase.getSplitOmbdFieldValue(omdbTvSerie.Language),
+    country: OpenMovieDatabase.getNullableOmbdFieldValue(omdbTvSerie.Country),
+    imdbRating: OpenMovieDatabase.getNullableOmbdFieldValue(omdbTvSerie.imdbRating),
+    totalSeasons: OpenMovieDatabase.getNullableOmbdFieldValue(omdbTvSerie.totalSeasons),
     lastUpdate: new Date()
   };
-}
-
-// gets an array from a field value
-function getSplitOmbdFieldValue(field) {
-  if (field && field != NO_DATA_FIELD_VALUE) {
-    return field.split(",");
-  }
-  return [];
-}
-
-// gets a nullable value
-function getNullableOmbdFieldValue(field) {
-  if (field && field != NO_DATA_FIELD_VALUE) {
-    return field;
-  }
-  return null;
 }
 
 module.exports = TvSerie;

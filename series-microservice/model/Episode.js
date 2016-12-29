@@ -9,9 +9,6 @@ var OpenMovieDatabase = require('./OpenMovieDatabase');
 var moment = require('moment');
 var winston = require('winston');
 
-
-const NO_DATA_FIELD_VALUE = "N/A";
-
 /*
   Entity that represents a TV Serie Episode.
 */
@@ -22,9 +19,14 @@ var episodeSchema = new Schema({
     type: String,
     index: true
   },
+  serieImdbId: {
+    type: String,
+    index: true
+  },
   releaseDate: Date,
   imdbRating: Number,
-  episodeNumber: Number
+  episodeNumber: Number,
+  season: Number
 });
 
 
@@ -54,6 +56,8 @@ Episode.search = (searchParams) => {
         for (let episode of receivedResults) {
           //converts and adds the result to the list
           var episodeData = obdb2schema(episode);
+          episodeData.serieImdbId = searchParams.serieImdbId;
+          episodeData.season = searchParams.seasonNumber;
           episodes.push(new Episode(episodeData));
         }
       }
@@ -82,18 +86,9 @@ function obdb2schema(omdbEpisode) {
     title: omdbEpisode.Title,
     imdbId: omdbEpisode.imdbID,
     releaseDate: releaseDate,
-    imdbRating: getNullableOmbdFieldValue(omdbEpisode.imdbRating),
+    imdbRating: OpenMovieDatabase.getNullableOmbdFieldValue(omdbEpisode.imdbRating),
     episodeNumber: omdbEpisode.Episode
   };
-}
-
-// gets a nullable value
-// TODO reuse this function on TvSerie and Episode
-function getNullableOmbdFieldValue(field) {
-  if (field && field != NO_DATA_FIELD_VALUE) {
-    return field;
-  }
-  return null;
 }
 
 module.exports = Episode;
