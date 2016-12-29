@@ -133,7 +133,7 @@ And you will receive:
     "serieImdbId": "tt1520211",
     "season": 6
   },
-  [..]
+  ...
   {
     "title": "Last Day on Earth",
     "imdbId": "tt4589574",
