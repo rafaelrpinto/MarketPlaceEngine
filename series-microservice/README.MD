@@ -105,10 +105,166 @@ And you will receive:
   ]
 }
 ```
+## Episodes Search
+
+Searches for TV Series Episodes based on the serie's IMDB Id and season number.
+
+`http://localhost:3000/episodes/tt1520211/6`
+
+And you will receive:
+
+```javascript
+[
+  {
+    "title": "First Time Again",
+    "imdbId": "tt4211958",
+    "releaseDate": "2015-10-11T00:00:00.000Z",
+    "imdbRating": 8.8,
+    "episodeNumber": 1,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "JSS",
+    "imdbId": "tt4452400",
+    "releaseDate": "2015-10-18T00:00:00.000Z",
+    "imdbRating": 9.4,
+    "episodeNumber": 2,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Thank You",
+    "imdbId": "tt4719614",
+    "releaseDate": "2015-10-25T00:00:00.000Z",
+    "imdbRating": 9.4,
+    "episodeNumber": 3,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Here's Not Here",
+    "imdbId": "tt4719620",
+    "releaseDate": "2015-11-01T00:00:00.000Z",
+    "imdbRating": 8.3,
+    "episodeNumber": 4,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Now",
+    "imdbId": "tt4719650",
+    "releaseDate": "2015-11-08T00:00:00.000Z",
+    "imdbRating": 7.4,
+    "episodeNumber": 5,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Always Accountable",
+    "imdbId": "tt4719674",
+    "releaseDate": "2015-11-15T00:00:00.000Z",
+    "imdbRating": 7.8,
+    "episodeNumber": 6,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Heads Up",
+    "imdbId": "tt4323856",
+    "releaseDate": "2015-11-22T00:00:00.000Z",
+    "imdbRating": 8.3,
+    "episodeNumber": 7,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Start to Finish",
+    "imdbId": "tt4589566",
+    "releaseDate": "2015-11-29T00:00:00.000Z",
+    "imdbRating": 8.1,
+    "episodeNumber": 8,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "No Way Out",
+    "imdbId": "tt4575388",
+    "releaseDate": "2016-02-14T00:00:00.000Z",
+    "imdbRating": 9.7,
+    "episodeNumber": 9,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "The Next World",
+    "imdbId": "tt4776068",
+    "releaseDate": "2016-02-21T00:00:00.000Z",
+    "imdbRating": 8.5,
+    "episodeNumber": 10,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Knots Untie",
+    "imdbId": "tt4776070",
+    "releaseDate": "2016-02-28T00:00:00.000Z",
+    "imdbRating": 8.4,
+    "episodeNumber": 11,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Not Tomorrow Yet",
+    "imdbId": "tt4776072",
+    "releaseDate": "2016-03-06T00:00:00.000Z",
+    "imdbRating": 9.1,
+    "episodeNumber": 12,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "The Same Boat",
+    "imdbId": "tt4776078",
+    "releaseDate": "2016-03-13T00:00:00.000Z",
+    "imdbRating": 8.8,
+    "episodeNumber": 13,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Twice as Far",
+    "imdbId": "tt4776082",
+    "releaseDate": "2016-03-20T00:00:00.000Z",
+    "imdbRating": 8.2,
+    "episodeNumber": 14,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "East",
+    "imdbId": "tt4776088",
+    "releaseDate": "2016-03-27T00:00:00.000Z",
+    "imdbRating": 8.1,
+    "episodeNumber": 15,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "Last Day on Earth",
+    "imdbId": "tt4589574",
+    "releaseDate": "2016-04-03T00:00:00.000Z",
+    "imdbRating": 6.1,
+    "episodeNumber": 16,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  }
+]
+}
+```
 
 ## TODO
 
-- Episode search
 - Authentication (jwt)
 - Logging standard to integrate with ELK
 - Helmet integration
