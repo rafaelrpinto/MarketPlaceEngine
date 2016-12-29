@@ -13,10 +13,10 @@ var OpenMovieDatabase = require('../../model/OpenMovieDatabase');
 var httpClient = require('../../util/HttpClient');
 
 describe('OpenMovieDatabase.js', () => {
-	describe('#search()', () => {
+	describe('#searchSerie()', () => {
 
 		let targetPromise = () => {
-			return OpenMovieDatabase.search("doesn't", 'matter', 1);
+			return OpenMovieDatabase.searchSerie("doesn't", 'matter', 1);
 		};
 
 		setupCommonErrorTests(targetPromise);
@@ -166,7 +166,7 @@ describe('OpenMovieDatabase.js', () => {
 function errorTestTemplate(expectedError, mockResponse, targetPromise) {
 	it('Should raise: ' + expectedError, (done) => {
 		mockHttpResponse(mockResponse);
-		//OpenMovieDatabase.search("doesn't", 'matter', 1)
+		//OpenMovieDatabase.searchSerie("doesn't", 'matter', 1)
 		targetPromise().then(() => {
 				assert.fail(1, 0, 'No error was thrown when it should have been');
 			})

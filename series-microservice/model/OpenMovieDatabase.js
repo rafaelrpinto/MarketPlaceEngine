@@ -13,20 +13,29 @@ function OpenMovieDatabase() {
 const OMDB_API_URL = "http://www.omdbapi.com/";
 
 /*
-	Searches for a title on OMDB.
+	Searches for a Tv Serie on  OMDB.
 */
-OpenMovieDatabase.search = (searchTerm, searchType, page) => {
-
-	//TODO: basic validation of the received params
-
+OpenMovieDatabase.searchSerie = (searchTerm, page) => {
 	return new Promise((resolve, reject) => {
-		var params = '?s=' + searchTerm + "&type=" + searchType + "&page=" + page;
+		var params = '?s=' + searchTerm + "&type=series&page=" + page;
 		return httpClient.get(OMDB_API_URL, params, (response) => {
 			parseOmdbResponse(response, resolve, reject);
 		});
-
 	});
 }
+
+/*
+	Searches for Tv Serie Episodes on  OMDB.
+*/
+OpenMovieDatabase.searchEpisodes = (serieImdbId, seasonNumber) => {
+	return new Promise((resolve, reject) => {
+		var params = '?i=' + serieImdbId + "&Season=" + seasonNumber;
+		return httpClient.get(OMDB_API_URL, params, (response) => {
+			parseOmdbResponse(response, resolve, reject);
+		});
+	});
+}
+
 
 /*
 	Retrieves a title by it's IMDB id.
@@ -58,7 +67,7 @@ function parseOmdbResponse(response, resolve, reject) {
 			if (!responseContentType || responseContentType.indexOf("application/json") == -1) {
 				throw "OMDB returned an invalid content type :'" + responseContentType + "'";
 			} else if (response.body.Error) {
-				if (response.body.Error == "Movie not found!") {
+				if (response.body.Error == "Movie not found!" || response.body.Error == "Series or season not found!") {
 					//no resutls, but no internal error
 					resolve({ totalResults: 0 });
 				} if (response.body.Error == "Incorrect IMDb ID.") {

@@ -70,7 +70,7 @@ router.get('/:imdbId', (req, res) => {
 			winston.debug(msg);
 		} else {
 			//returns the json
-			res.json(tvSerie);	
+			res.json(tvSerie);
 		}
 	}).catch((err) => {
 		winston.error("Error searching for serie by IMDB id", {

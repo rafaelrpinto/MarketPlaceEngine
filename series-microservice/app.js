@@ -23,5 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //Route definitions
 var series = require('./routes/seriesController');
 app.use('/series', series);
+var episodes = require('./routes/episodesController');
+app.use('/episodes', episodes);
 
 module.exports = app;
