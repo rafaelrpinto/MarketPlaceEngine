@@ -1,6 +1,6 @@
 "use strict"
 
-var unirest = require('unirest');
+let unirest = require('unirest');
 
 /*
  Façade that isolates the model from the http framework.

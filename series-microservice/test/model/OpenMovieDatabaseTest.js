@@ -3,14 +3,14 @@
 /*
 	Test case for OpenMovieDatabase.js
 */
-var sinon = require('sinon');
-var assert = require("chai").assert;
-var should = require("chai").should;
+let sinon = require('sinon');
+let assert = require("chai").assert;
+let should = require("chai").should;
 
 //Victim
-var OpenMovieDatabase = require('../../model/OpenMovieDatabase');
+let OpenMovieDatabase = require('../../model/OpenMovieDatabase');
 //Dependencies to be mocked
-var httpClient = require('../../util/HttpClient');
+let httpClient = require('../../util/HttpClient');
 
 describe('OpenMovieDatabase.js', () => {
 	describe('#searchSerie()', () => {
@@ -22,7 +22,7 @@ describe('OpenMovieDatabase.js', () => {
 		setupCommonErrorTests(targetPromise);
 
 		it("Should receive results.", (done) => {
-			var mockResponse = {
+			let mockResponse = {
 				headers: {
 					"content-type": "application/json"
 				},
@@ -59,7 +59,7 @@ describe('OpenMovieDatabase.js', () => {
 		});
 
 		it("can handle an empty search result", (done) => {
-			var mockResponse = {
+			let mockResponse = {
 				headers: {
 					"content-type": "application/json"
 				},
@@ -92,7 +92,7 @@ describe('OpenMovieDatabase.js', () => {
 		setupCommonErrorTests(targetPromise);
 
 		it("can find a serie by imdb id", (done) => {
-			var mockResponse = {
+			let mockResponse = {
 				headers: {
 					"content-type": "application/json"
 				},
@@ -136,7 +136,7 @@ describe('OpenMovieDatabase.js', () => {
 		});
 
 		it("can handle an empty search result", (done) => {
-			var mockResponse = {
+			let mockResponse = {
 				headers: {
 					"content-type": "application/json"
 				},

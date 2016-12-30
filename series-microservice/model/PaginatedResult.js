@@ -10,13 +10,13 @@ function PaginatedResult(pageResults, currentPage, totalResultCount, pageSize) {
 	}
 
 	//checks the currentPage param
-	var numericCurrentPage = Number(currentPage);
+	let numericCurrentPage = Number(currentPage);
 	if (!isPositiveIntegerParam(numericCurrentPage)) {
 		throw new Error("Invalid 'currentPage' parameter");
 	}
 
 	//checks the totalResultCount param
-	var numericTotalResultCount = Number(totalResultCount);
+	let numericTotalResultCount = Number(totalResultCount);
 	if (totalResultCount == null || !isPositiveIntegerParam(numericTotalResultCount, true)) {
 		throw new Error("Invalid 'totalResultCount' parameter");
 	} else if (numericTotalResultCount < pageResults.length) {
@@ -31,7 +31,7 @@ function PaginatedResult(pageResults, currentPage, totalResultCount, pageSize) {
 	}
 
 	//calculates the totalPageCount param
-	var totalPageCount = 1;
+	let totalPageCount = 1;
 	if (numericTotalResultCount > 0) {
 		totalPageCount = Math.ceil(numericTotalResultCount / pageSize);
 	}

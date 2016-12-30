@@ -1,9 +1,9 @@
 "use strict"
 
-var Episode = require('../model/Episode');
-var express = require('express');
-var router = express.Router();
-var winston = require('winston');
+let Episode = require('../model/Episode');
+let express = require('express');
+let router = express.Router();
+let winston = require('winston');
 
 /*
 	Searches for TV Series episodes title on OMDB.
@@ -11,20 +11,20 @@ var winston = require('winston');
 router.get('/:serieImdbId/:seasonNumber', (req, res) => {
 
 		//check the title
-    var serieImdbId = req.params.serieImdbId;
+    let serieImdbId = req.params.serieImdbId;
     if (!serieImdbId || serieImdbId.trim().length == 0) {
         res.status(400).send("Invalid serieImdbId.");
         return;
     }
 
 		//check the season number
-    var seasonNumber = Number(req.params.seasonNumber);
+    let seasonNumber = Number(req.params.seasonNumber);
     if (isNaN(seasonNumber) || seasonNumber < 1 || seasonNumber % 1 !== 0) {
         res.status(400).send("Invalid season number.");
         return;
     }
 
-    var searchParams = {
+    let searchParams = {
         serieImdbId: serieImdbId,
         seasonNumber: seasonNumber
     };
@@ -32,7 +32,7 @@ router.get('/:serieImdbId/:seasonNumber', (req, res) => {
     //Searches for episodes
     Episode.search(searchParams).then((episodes) => {
         if (episodes.length == 0) {
-            var msg = "No episodes found (Or you requested an invalid season).";
+            let msg = "No episodes found (Or you requested an invalid season).";
             res.status(404).send(msg);
             winston.debug(msg, searchParams);
         } else {

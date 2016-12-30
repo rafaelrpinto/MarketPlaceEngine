@@ -3,32 +3,32 @@
 /*
 	Test case for TvSerie.js
 */
-var sinon = require('sinon');
-var assert = require("chai").assert;
-var should = require("chai").should();
+let sinon = require('sinon');
+let assert = require("chai").assert;
+let should = require("chai").should();
 //default test coniguration
-var testConfig = require("../testConfig.js");
+let testConfig = require("../testConfig.js");
 
 //victim
-var TvSerie = require('../../model/TvSerie');
+let TvSerie = require('../../model/TvSerie');
 
 //dependencies
-var OpenMovieDatabase = require('../../model/OpenMovieDatabase');
-var PaginatedResult = require('../../model/PaginatedResult');
+let OpenMovieDatabase = require('../../model/OpenMovieDatabase');
+let PaginatedResult = require('../../model/PaginatedResult');
 
 describe('TvSerie.js', () => {
 	beforeEach(testConfig.db.beforeEach);
 
 	describe('#toJSON()', () => {
 		it('should generate json without metadata / null fields', (done) => {
-			var serie = new TvSerie({
+			let serie = new TvSerie({
 				title: "Some tile",
 				imdbId: "Some id",
 				posterLink: null,
 				actors : []
 			});
-			var expectedJson = '{"title":"Some tile","imdbId":"Some id"}';
-			var generatedJson = JSON.stringify(serie);
+			let expectedJson = '{"title":"Some tile","imdbId":"Some id"}';
+			let generatedJson = JSON.stringify(serie);
 			assert(expectedJson == generatedJson, "Unexpected json generated");
 			done();
 		});
@@ -46,7 +46,7 @@ describe('TvSerie.js', () => {
 
 	describe('#find()', () => {
 		it("can be listed", function(done) {
-			var newSeries = generateTvSeries(2);
+			let newSeries = generateTvSeries(2);
 			TvSerie.create(newSeries, (err, model) => {
 				if (err) return done(err);
 				TvSerie.find({}, function(err, docs) {
@@ -82,7 +82,7 @@ function mockOMDBResponse(response) {
 
 //generates tv series
 function generateTvSeries(quantity) {
-	var result = new Array();
+	let result = new Array();
 	for (let i = 1; i <= quantity; i++) {
 		result.push(new TvSerie({
 			title: "title" + i,

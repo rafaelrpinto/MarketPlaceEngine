@@ -3,12 +3,12 @@
 /*
 	Test case for PaginatedResult.js
 */
-var chai = require("chai")
-var expect = chai.expect;
-var assert = chai.assert;
+let chai = require("chai")
+let expect = chai.expect;
+let assert = chai.assert;
 
 //Victim
-var PaginatedResult = require('../../model/PaginatedResult');
+let PaginatedResult = require('../../model/PaginatedResult');
 
 describe('PaginatedResult.js', () => {
 	describe('#new PaginatedResult()', () => {
@@ -40,30 +40,30 @@ describe('PaginatedResult.js', () => {
 			expect(() => new PaginatedResult([], 1, 1.5)).to.throw("Invalid 'totalResultCount' parameter");
 		});
 		it('Zero "totalResultCount" parameter', () => {
-			var victim = new PaginatedResult([], 1, 0);
+			let victim = new PaginatedResult([], 1, 0);
 			assert(victim.totalResultCount === 0, "Zeros should be allowed on the 'totalResultCount' property");
 		});
 		it('Inconsistent "totalResultCount" parameter', () => {
 			expect(() => new PaginatedResult([1, 1], 1, 1)).to.throw("Inconsistent state. 'totalResultCount' is less than 'pageResults' count (1/2)");
 		});
 		it('Default "pageSize" parameter', () => {
-			var victim = new PaginatedResult([], 1, 1);
+			let victim = new PaginatedResult([], 1, 1);
 			assert(victim.pageSize === 10, "The default page size should be 10!");
 		});
 		it('"totalPageCount" for no results', () => {
-			var victim = new PaginatedResult([], 1, 0);
+			let victim = new PaginatedResult([], 1, 0);
 			assert(victim.totalPageCount === 1, "The value of 'totalPageCount' should be 1!");
 		});
 		it('"totalPageCount" for one page', () => {
-			var victim = new PaginatedResult([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 1, 10);
+			let victim = new PaginatedResult([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 1, 10);
 			assert(victim.totalPageCount === 1, "The value of 'totalPageCount' should be 1!");
 		});
 		it('"totalPageCount" for multiple pages', () => {
-			var victim = new PaginatedResult([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 1, 11);
+			let victim = new PaginatedResult([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 1, 11);
 			assert(victim.totalPageCount === 2, "The value of 'totalPageCount' should be 2!");
 		});
 		it('Full integrity test', () => {
-			var victim = new PaginatedResult([1, 2, 3, 4], 1, 11, 4);
+			let victim = new PaginatedResult([1, 2, 3, 4], 1, 11, 4);
 			assert(victim.pageResults.length === 4, "The results length should be 4.");
 			assert(victim.pageSize === 4, "The value of 'pageSize' should be 4.");
 			assert(victim.currentPage === 1, "The value of 'currentPage' should be 1.");

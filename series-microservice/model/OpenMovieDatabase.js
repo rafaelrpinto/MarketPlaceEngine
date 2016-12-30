@@ -1,6 +1,6 @@
 "use strict"
 
-var httpClient = require('../util/HttpClient');
+let httpClient = require('../util/HttpClient');
 
 /*
 	Object responsible for interacting with the OMDB api.
@@ -18,7 +18,7 @@ const NO_DATA_FIELD_VALUE = "N/A";
 */
 OpenMovieDatabase.searchSerie = (searchTerm, page) => {
 	return new Promise((resolve, reject) => {
-		var params = '?s=' + searchTerm + "&type=series&page=" + page;
+		let params = '?s=' + searchTerm + "&type=series&page=" + page;
 		return httpClient.get(OMDB_API_URL, params, (response) => {
 			parseOmdbResponse(response, resolve, reject);
 		});
@@ -30,7 +30,7 @@ OpenMovieDatabase.searchSerie = (searchTerm, page) => {
 */
 OpenMovieDatabase.searchEpisodes = (serieImdbId, seasonNumber) => {
 	return new Promise((resolve, reject) => {
-		var params = '?i=' + serieImdbId + "&Season=" + seasonNumber;
+		let params = '?i=' + serieImdbId + "&Season=" + seasonNumber;
 		return httpClient.get(OMDB_API_URL, params, (response) => {
 			parseOmdbResponse(response, resolve, reject);
 		});
@@ -43,7 +43,7 @@ OpenMovieDatabase.searchEpisodes = (serieImdbId, seasonNumber) => {
 */
 OpenMovieDatabase.findByImdbId = (imdbId) => {
 	return new Promise((resolve, reject) => {
-		var params = '?i=' + imdbId;
+		let params = '?i=' + imdbId;
 		return httpClient.get(OMDB_API_URL, params, (response) => {
 			parseOmdbResponse(response, resolve, reject);
 		});
@@ -78,7 +78,7 @@ function parseOmdbResponse(response, resolve, reject) {
 		} else if (response.status > 399) {
 			throw "OMDB returned http error code: " + response.status;
 		} else {
-			var responseContentType = response.headers["content-type"];
+			let responseContentType = response.headers["content-type"];
 			if (!responseContentType || responseContentType.indexOf("application/json") == -1) {
 				throw "OMDB returned an invalid content type :'" + responseContentType + "'";
 			} else if (response.body.Error) {

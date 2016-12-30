@@ -1,15 +1,15 @@
 "use strict"
 
-var TvSerie = require('../model/TvSerie');
-var express = require('express');
-var router = express.Router();
-var winston = require('winston');
+let TvSerie = require('../model/TvSerie');
+let express = require('express');
+let router = express.Router();
+let winston = require('winston');
 
 /*
 	Searches for a TV Series title on OMDB.
 */
 router.get('/search/:title/:page*?', (req, res) => {
-	var title = req.params.title;
+	let title = req.params.title;
 
 	//check the title
 	if (!title || title.trim().length == 0) {
@@ -17,7 +17,7 @@ router.get('/search/:title/:page*?', (req, res) => {
 		return;
 	}
 
-	var page = 1;
+	let page = 1;
 	if (req.params.page != null) {
 		page = Number(req.params.page);
 		if (isNaN(page) || page < 1 || page % 1 !== 0) {
@@ -26,7 +26,7 @@ router.get('/search/:title/:page*?', (req, res) => {
 		}
 	}
 
-	var searchParams = {
+	let searchParams = {
 		title: title,
 		page: page
 	};
@@ -34,7 +34,7 @@ router.get('/search/:title/:page*?', (req, res) => {
 	//Searches for series according to the path parameter
 	TvSerie.search(searchParams).then((paginatedResult) => {
 		if (paginatedResult.totalResultCount == 0) {
-			var msg = "No series found.";
+			let msg = "No series found.";
 			if (page > 1) {
 				msg += " (Or you requested a page that is out of range)"
 			}
@@ -55,7 +55,7 @@ router.get('/search/:title/:page*?', (req, res) => {
 	Searches for a TV Series title on OMDB.
 */
 router.get('/:imdbId', (req, res) => {
-	var imdbId = req.params.imdbId;
+	let imdbId = req.params.imdbId;
 
 	//check the imdbId
 	if (!imdbId || imdbId.trim().length == 0) {
@@ -65,7 +65,7 @@ router.get('/:imdbId', (req, res) => {
 
 	TvSerie.findByImdbId(imdbId).then((tvSerie) => {
 		if (!tvSerie) {
-			var msg = "Tv Serie with IMDB id '" + imdbId + "' not found!";
+			let msg = "Tv Serie with IMDB id '" + imdbId + "' not found!";
 			res.status(404).send(msg);
 			winston.debug(msg);
 		} else {
