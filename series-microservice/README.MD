@@ -105,10 +105,50 @@ And you will receive:
   ]
 }
 ```
+## Episodes Search
+
+Searches for TV Series Episodes based on the serie's IMDB Id and season number.
+
+`http://localhost:3000/episodes/tt1520211/6`
+
+And you will receive:
+
+```javascript
+[
+  {
+    "title": "First Time Again",
+    "imdbId": "tt4211958",
+    "releaseDate": "2015-10-11T00:00:00.000Z",
+    "imdbRating": 8.8,
+    "episodeNumber": 1,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  {
+    "title": "JSS",
+    "imdbId": "tt4452400",
+    "releaseDate": "2015-10-18T00:00:00.000Z",
+    "imdbRating": 9.4,
+    "episodeNumber": 2,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  },
+  ...
+  {
+    "title": "Last Day on Earth",
+    "imdbId": "tt4589574",
+    "releaseDate": "2016-04-03T00:00:00.000Z",
+    "imdbRating": 6.1,
+    "episodeNumber": 16,
+    "serieImdbId": "tt1520211",
+    "season": 6
+  }
+]
+}
+```
 
 ## TODO
 
-- Episode search
 - Authentication (jwt)
 - Logging standard to integrate with ELK
 - Helmet integration
