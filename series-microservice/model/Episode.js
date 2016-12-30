@@ -54,7 +54,7 @@ episodeSchema.methods.isUpdateRequired = function() {
 let Episode = mongoose.model('episode', episodeSchema);
 
 // retrieves the episodes from the database
-Episode.findIdInDb = (serieImdbId, seasonNumber) => {
+Episode.findInDb = (serieImdbId, seasonNumber) => {
     return new Promise((resolve, reject) => {
         Episode.find({serieImdbId: serieImdbId, season: seasonNumber}).exec().then((episodes) => {
             resolve(episodes);
@@ -66,7 +66,7 @@ Episode.findIdInDb = (serieImdbId, seasonNumber) => {
 Episode.search = (searchParams) => {
     return new Promise(function(resolve, reject) {
         //first we try to get the episodes from the DB
-        Episode.findIdInDb(searchParams.serieImdbId, searchParams.seasonNumber).then((existingEpisodes) => {
+        Episode.findInDb(searchParams.serieImdbId, searchParams.seasonNumber).then((existingEpisodes) => {
             let existInDb = (existingEpisodes && existingEpisodes.length > 0);
 
             //if they exist we check if they are up-to-date
