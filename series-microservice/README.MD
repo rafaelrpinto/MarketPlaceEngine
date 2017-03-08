@@ -22,11 +22,11 @@ cd series-microservice
 # Create the microservice image
 docker build -t series-microservice:0.1 . 
 
-# Start the mongo image mapping its 27017 port to the host's 27018 (to avoid conflict)
+# Start mongo
 docker run --name testdb -p 27018:27017 -d mongo:3
 
 # Start the microservice pointing to the mongo container
-docker run --name series-microservice -p 3000:3000 -d -e MONGO_HOST=testdb -e MONGO_PORT=27018 --link testdb -d series-microservice:0.1
+docker run --name series-microservice -p 3000:3000 -d -e MONGO_HOST=testdb -e MONGO_PORT=27017 --link testdb -d series-microservice:0.1
 ```
 ### Using docker-compose (automatically creating/running all containers)
 
