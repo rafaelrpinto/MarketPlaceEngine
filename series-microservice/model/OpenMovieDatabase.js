@@ -3,9 +3,9 @@ const Promise = require("bluebird");
 let request = Promise.promisify(require("request"));
 
 /*
-	Object responsible for interacting with the OMDB api.
+	Class responsible for interacting with the OMDB api.
 */
-function OpenMovieDatabase() {}
+class OpenMovieDatabase {}
 
 // constants
 const OMDB_API_URL = "http://www.omdbapi.com";
