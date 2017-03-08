@@ -1,14 +1,14 @@
 "use strict"
-
-//db libs
-let mongoose = require('mongoose');
-let Schema = mongoose.Schema;
+const Promise = require("bluebird");
+const mongoose = Promise.promisifyAll(require("mongoose"));
+const Schema = mongoose.Schema;
+let moment = require('moment');
+let winston = require('winston');
 // model dependencies
 let OpenMovieDatabase = require('./OpenMovieDatabase');
 let PaginatedResult = require('./PaginatedResult');
-// util libs
-let moment = require('moment');
-let winston = require('winston');
+
+let TvSerie = null;
 
 /*
   Entity that represents a TV Serie.
@@ -60,7 +60,7 @@ tvSerieSchema.methods.isUpdateRequired = function() {
 //Removes some details from the json representation and null values
 tvSerieSchema.methods.toJSON = function() {
     let obj = this.toObject();
-    //removes intenal details
+    // we will use imdbid as the external key
     delete obj._id;
     delete obj.__v;
     delete obj.lastUpdate;
@@ -75,104 +75,90 @@ tvSerieSchema.methods.toJSON = function() {
     return obj
 }
 
-let TvSerie = mongoose.model('tvSerie', tvSerieSchema);
-
 //Searches for Tv Series by title
-TvSerie.search = (searchParams) => {
-    return new Promise(function(resolve, reject) {
-        OpenMovieDatabase.searchSerie(searchParams.title, searchParams.page).then(function(responseBody) {
-            //converts the received data to TvSerie structure
-            let searchResults = new Array();
+tvSerieSchema.statics.search = (searchParams) => {
+    return Promise.resolve().then(() => {
+        return OpenMovieDatabase.searchSerie(searchParams.title, searchParams.page);
+    }).then(function(responseBody) {
+        //converts the received data to TvSerie structure
+        let searchResults = new Array();
 
-            //data returned by OMDB
-            let receivedPageResults = responseBody.Search;
-            let receivedTotalResultCount = responseBody.totalResults;
+        //data returned by OMDB
+        let receivedPageResults = responseBody.Search;
+        let receivedTotalResultCount = responseBody.totalResults;
 
-            if (Array.isArray(receivedPageResults)) {
-                for (let searchItem of receivedPageResults) {
-                    //converts and adds the search result to the list
-                    let tvSerieData = obdb2schema(searchItem);
-                    searchResults.push(new TvSerie(tvSerieData));
-                }
+        if (Array.isArray(receivedPageResults)) {
+            for (let searchItem of receivedPageResults) {
+                //converts and adds the search result to the list
+                let tvSerieData = obdb2mySchema(searchItem);
+                searchResults.push(new TvSerie(tvSerieData));
             }
-            //returns a paginated result
-            resolve(new PaginatedResult(searchResults, searchParams.page, receivedTotalResultCount));
-        }).catch(reject);
+        }
+        //returns a paginated result
+        return new PaginatedResult(searchResults, searchParams.page, receivedTotalResultCount);
     });
 };
 
 //Searches for Tv Series by IMDB id
-TvSerie.findByImdbId = (imdbId) => {
-    return new Promise(function(resolve, reject) {
-        //search the imdb id in the database
-        TvSerie.findByImdbIdInDb(imdbId).then((existingDbSerie) => {
-            let exists = (existingDbSerie != null);
-            //if it it does not exists or is outdated
-            if (!exists || existingDbSerie.isUpdateRequired()) {
-                winston.debug(`[Serie ${imdbId}] Serie isn't in the DB or it's outdated. Fetching from OMDB...`);
-                //we search OMDB for it
-                OpenMovieDatabase.findByImdbId(imdbId).then(function(responseBody) {
-                    if (responseBody) {
-                        winston.debug(`[Serie ${imdbId}] Received fresh serie data from OMDB. Saving in the DB..`);
+tvSerieSchema.statics.findByImdbId = (imdbId) => {
+    return Promise.resolve().then(() => {
+        return TvSerie.findByImdbIdInDb(imdbId);
+    }).then((existingDbSerie) => {
+        let exists = (existingDbSerie != null);
 
-                        //we convert the received result
-                        let tvSerieData = obdb2schema(responseBody);
+        if (!exists || existingDbSerie.isUpdateRequired()) {
+            winston.debug(`[Serie ${imdbId}] Serie isn't in the DB or it's outdated. Fetching from OMDB...`);
 
-                        //if it already exists in the DB
-                        if (exists) {
-                            winston.debug(`[Serie ${imdbId}] There is already a row in the DB. Updating...`);
-                            existingDbSerie.update(tvSerieData).then(() => {
-                                resolve(existingDbSerie);
-                            }).catch(reject);
-                        } else {
-                            new TvSerie(tvSerieData).save().then(resolve).catch(reject);
-                        }
+            //we search OMDB for it
+            return OpenMovieDatabase.findByImdbId(imdbId).then(function(responseBody) {
+                if (responseBody) {
+                    winston.debug(`[Serie ${imdbId}] Received fresh serie data from OMDB. Saving in the DB..`);
+
+                    //we convert the received result
+                    let tvSerieData = obdb2mySchema(responseBody);
+
+                    //if it already exists in the DB
+                    if (exists) {
+                        winston.debug(`[Serie ${imdbId}] There is already a row in the DB. Updating...`);
+                        return existingDbSerie.update(tvSerieData);
                     } else {
-                        //no result from OMDB
-                        winston.debug(`[Serie ${imdbId}] IMDB id not found on OMDB.`);
-
-                        if (exists) {
-                            //but we have a row in the db, so we update the updateDate to postpone the next refresh and return out object
-                            winston.debug(`[Serie ${imdbId}] Refreshing updateDate and returining existing row...`);
-                            existingDbSerie.update({
-                                $set: {
-                                    lastUpdate: new Date()
-                                }
-                            }).then(resolve).catch(reject);
-                        } else {
-                            //nothing on OMDB and our DB
-                            resolve(null);
-                        }
+                        return new TvSerie(tvSerieData).save();
                     }
-                }).catch(reject);
-            } else {
-                //existing and up-to-date
-                winston.debug(`[Serie ${imdbId}] Found up-to-date entry in the DB. Returning it...`);
-                resolve(existingDbSerie);
-            }
-        }).catch(reject);
-    });
+                } else {
+                    //no result from OMDB
+                    winston.debug(`[Serie ${imdbId}] IMDB id not found on OMDB.`);
+
+                    if (exists) {
+                        //but we have a row in the db, so we update the updateDate to postpone the next refresh and return out object
+                        winston.debug(`[Serie ${imdbId}] Refreshing updateDate and returining existing row...`);
+                        return existingDbSerie.update({
+                            $set: {
+                                lastUpdate: new Date()
+                            }
+                        });
+                    } else {
+                        //nothing on OMDB and in our DB
+                        return null;
+                    }
+                }
+            });
+        } else {
+            //existing and up-to-date
+            winston.debug(`[Serie ${imdbId}] Found up-to-date entry in the DB. Returning it...`);
+            return existingDbSerie;
+        }
+    })
 };
 
-// DB methods
-
-// retrieves the serie by it's imdb id from the database
-TvSerie.findByImdbIdInDb = (imdbId) => {
-    return new Promise((resolve, reject) => {
-        if (!imdbId) {
-            reject("Invalid paameter for findByImdbIdsInDb");
-        } else {
-            TvSerie.findOne({"imdbId": imdbId}).exec().then((result) => {
-                resolve(result);
-            }).catch(reject);
-        }
-    });
+// DB methods retrieves the serie by it's imdb id from the database
+tvSerieSchema.statics.findByImdbIdInDb = (imdbId) => {
+    if (!imdbId)
+        return Promise.resolve(null);
+    return TvSerie.findOne({"imdbId": imdbId});
 }
 
-//helper functions
-
-// converts from the OMDB structure to TvSerie schema
-function obdb2schema(omdbTvSerie) {
+//helper functions converts from the OMDB structure to TvSerie schema
+function obdb2mySchema(omdbTvSerie) {
 
     if (!omdbTvSerie) {
         return null;
@@ -215,4 +201,5 @@ function obdb2schema(omdbTvSerie) {
     };
 }
 
+TvSerie = mongoose.model('tvSerie', tvSerieSchema);
 module.exports = TvSerie;

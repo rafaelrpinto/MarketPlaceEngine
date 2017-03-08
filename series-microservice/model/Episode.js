@@ -1,13 +1,13 @@
 "use strict"
-
-//db libs
-let mongoose = require('mongoose');
-let Schema = mongoose.Schema;
-// model dependencies
-let OpenMovieDatabase = require('./OpenMovieDatabase');
-// util libs
+const Promise = require("bluebird");
+const mongoose = Promise.promisifyAll(require("mongoose"));
+const Schema = mongoose.Schema;
 let moment = require('moment');
 let winston = require('winston');
+// model dependencies
+let OpenMovieDatabase = require('./OpenMovieDatabase');
+
+let Episode = null;
 
 /*
   Entity that represents a TV Serie Episode.
@@ -37,7 +37,7 @@ let episodeSchema = new Schema({
 //Removes some details from the json representation and null values
 episodeSchema.methods.toJSON = function() {
     let obj = this.toObject();
-    //removes intenal details
+    //we will use imdbid and episode/season number as keys
     delete obj._id;
     delete obj.__v;
     delete obj.lastUpdate;
@@ -48,70 +48,59 @@ episodeSchema.methods.toJSON = function() {
 // check if this row requires an update from OMDB
 episodeSchema.methods.isUpdateRequired = function() {
     //30 days passed from the last update
-    return moment(this.lastUpdate).add(30, "days").isBefore(moment());
+    //TODO variable time depending if it's currenlty on air
+    return moment(this.lastUpdate).add(7, "days").isBefore(moment());
 };
 
-let Episode = mongoose.model('episode', episodeSchema);
-
 // retrieves the episodes from the database
-Episode.findInDb = (serieImdbId, seasonNumber) => {
-    return new Promise((resolve, reject) => {
-        Episode.find({serieImdbId: serieImdbId, season: seasonNumber}).exec().then((episodes) => {
-            resolve(episodes);
-        }).catch(reject);
-    });
+episodeSchema.statics.findInDb = (serieImdbId, seasonNumber) => {
+    if (!serieImdbId || !seasonNumber)
+        return Promise.resolve(null);
+
+    return Episode.find({serieImdbId: serieImdbId, season: seasonNumber});
 }
 
 //Searches for Tv Series Episodes
-Episode.search = (searchParams) => {
-    return new Promise(function(resolve, reject) {
-        //first we try to get the episodes from the DB
-        Episode.findInDb(searchParams.serieImdbId, searchParams.seasonNumber).then((existingEpisodes) => {
-            let existInDb = (existingEpisodes && existingEpisodes.length > 0);
+episodeSchema.statics.search = (searchParams) => {
+    return Promise.resolve().then(() => {
+        return Episode.findInDb(searchParams.serieImdbId, searchParams.seasonNumber);
+    }).then((existingEpisodes) => {
+        let existInDb = (existingEpisodes && existingEpisodes.length > 0);
 
-            //if they exist we check if they are up-to-date
-            if (existInDb) {
-                let updateRequired = false;
-                for (let existingEpisode of existingEpisodes) {
-                    if (existingEpisode.isUpdateRequired()) {
-                        updateRequired = true;
-                        break;
-                    }
+        //if they exist we check if they are up-to-date
+        if (existInDb) {
+            let updateRequired = false;
+            for (let existingEpisode of existingEpisodes) {
+                if (existingEpisode.isUpdateRequired()) {
+                    updateRequired = true;
+                    break;
                 }
-
-                if (!updateRequired) {
-                    winston.debug(`[Serie ${searchParams.serieImdbId} Season ${searchParams.seasonNumber} ] Found up-to-date entries in the DB, returning them...`);
-                    resolve(existingEpisodes);
-                    //no need to search on OMDB, we leave the method here
-                    return;
-                }
-
-                winston.debug(`[Serie ${searchParams.serieImdbId} Season ${searchParams.seasonNumber} ] Episodes outdated. Searching on OMDB...`);
-            } else {
-                //otherwise we go  on and search for them on OMDB
-                winston.debug(`[Serie ${searchParams.serieImdbId} Season ${searchParams.seasonNumber} ] Episodes not found in the DB. Searching on OMDB...`);
             }
 
-            OpenMovieDatabase.searchEpisodes(searchParams.serieImdbId, searchParams.seasonNumber).then(function(responseBody) {
-                //converts the received data to Episode structure
-                let episodes = new Array();
+            if (!updateRequired) {
+                winston.debug(`[Serie ${searchParams.serieImdbId} Season ${searchParams.seasonNumber} ] Found up-to-date entries in the DB, returning them...`);
+                return existingEpisodes;
+            }
 
-                //data returned by OMDB
-                let receivedResults = responseBody.Episodes;
-                let receivedTotalResultCount = responseBody.totalResults;
+            winston.debug(`[Serie ${searchParams.serieImdbId} Season ${searchParams.seasonNumber} ] Episodes outdated. Searching on OMDB...`);
+        } else {
+            //otherwise we go  on and search for them on OMDB
+            winston.debug(`[Serie ${searchParams.serieImdbId} Season ${searchParams.seasonNumber} ] Episodes not found in the DB. Searching on OMDB...`);
+        }
 
-                //we clear any outdated episodes if necessary
-                if (existInDb) {
+        return OpenMovieDatabase.searchEpisodes(searchParams.serieImdbId, searchParams.seasonNumber).then((responseBody) => {
+            //converts the received data to Episode structure
+            let episodes = new Array();
 
-                    winston.debug(`[Serie ${searchParams.serieImdbId} Season ${searchParams.seasonNumber} ] Deleting outdated episodes...`);
-                    Episode.remove({serieImdbId: searchParams.serieImdbId, season: searchParams.seasonNumber}).exec();
-                }
+            //data returned by OMDB
+            let receivedResults = responseBody.Episodes;
 
+            let updatePromise = Promise.resolve().then(() => {
                 //iterate inthe received results
                 if (Array.isArray(receivedResults)) {
                     for (let receivedEpisode of receivedResults) {
                         //converts the OMDB structure to out model
-                        let episodeData = obdb2schema(receivedEpisode);
+                        let episodeData = obdb2mySchema(receivedEpisode);
                         episodeData.serieImdbId = searchParams.serieImdbId;
                         episodeData.season = searchParams.seasonNumber;
 
@@ -123,20 +112,24 @@ Episode.search = (searchParams) => {
                         episodes.push(episode);
                     }
                 }
-
                 //returns the episode list
                 winston.debug(`[Serie ${searchParams.serieImdbId} Season ${searchParams.seasonNumber} ] OMDB returned ${episodes.length} episodes...`);
-                resolve(episodes);
-            }).catch(reject);
+                return episodes;
+            });
 
-        }).catch(reject);
+            //we clear any outdated episodes if necessary
+            if (existInDb) {
+                winston.debug(`[Serie ${searchParams.serieImdbId} Season ${searchParams.seasonNumber} ] Deleting outdated episodes...`);
+                return Episode.remove({serieImdbId: searchParams.serieImdbId, season: searchParams.seasonNumber}).then(updatePromise);
+            } else {
+                return updatePromise;
+            }
+        });
     });
 };
 
-//helper functions
-
-// converts from the OMDB structure to Episode schema
-function obdb2schema(omdbEpisode) {
+//helper functions converts from the OMDB structure to Episode schema
+function obdb2mySchema(omdbEpisode) {
 
     if (!omdbEpisode) {
         return null;
@@ -157,4 +150,5 @@ function obdb2schema(omdbEpisode) {
     };
 }
 
+Episode = mongoose.model('episode', episodeSchema);
 module.exports = Episode;

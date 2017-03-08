@@ -4,7 +4,6 @@ let config = require('./config');
 let express = require('express');
 //let logger = require('morgan');
 let bodyParser = require('body-parser');
-let unirest = require('unirest');
 
 //DB config
 let mongoose   = require('mongoose');

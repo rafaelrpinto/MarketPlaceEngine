@@ -1,27 +1,26 @@
 "use strict"
-
-let Episode = require('../model/Episode');
+// dependencies
 let express = require('express');
 let router = express.Router();
 let winston = require('winston');
+// model
+let Episode = require('../model/Episode');
 
 /*
 	Searches for TV Series episodes title on OMDB.
 */
 router.get('/:serieImdbId/:seasonNumber', (req, res) => {
 
-		//check the title
+    //check the title
     let serieImdbId = req.params.serieImdbId;
     if (!serieImdbId || serieImdbId.trim().length == 0) {
-        res.status(400).send("Invalid serieImdbId.");
-        return;
+        return res.status(400).send("Invalid serieImdbId.");
     }
 
-		//check the season number
+    //check the season number
     let seasonNumber = Number(req.params.seasonNumber);
     if (isNaN(seasonNumber) || seasonNumber < 1 || seasonNumber % 1 !== 0) {
-        res.status(400).send("Invalid season number.");
-        return;
+        return res.status(400).send("Invalid season number.");
     }
 
     let searchParams = {
@@ -40,8 +39,7 @@ router.get('/:serieImdbId/:seasonNumber', (req, res) => {
             res.json(episodes);
         }
     }).catch((err) => {
-        searchParams.stack = err.stack;
-        winston.error("Error searching episodes", searchParams);
+        winston.error("Error searching episodes", err);
         res.status(500).send("Internal error.");
     });
 });

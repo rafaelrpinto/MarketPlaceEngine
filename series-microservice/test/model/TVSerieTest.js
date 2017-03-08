@@ -1,20 +1,13 @@
 "use strict"
-
-/*
-	Test case for TvSerie.js
-*/
-let sinon = require('sinon');
-let assert = require("chai").assert;
-let should = require("chai").should();
+const chai = require("chai");
+const chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+chai.should();
 //default test coniguration
 let testConfig = require("../testConfig.js");
 
 //victim
 let TvSerie = require('../../model/TvSerie');
-
-//dependencies
-let OpenMovieDatabase = require('../../model/OpenMovieDatabase');
-let PaginatedResult = require('../../model/PaginatedResult');
 
 describe('TvSerie.js', () => {
     beforeEach(testConfig.db.beforeEach);
@@ -23,66 +16,30 @@ describe('TvSerie.js', () => {
         it('should generate json without metadata / null fields', (done) => {
             let serie = new TvSerie({title: "Some tile", imdbId: "Some id", posterLink: null, actors: []});
             let expectedJson = '{"title":"Some tile","imdbId":"Some id"}';
-            let generatedJson = JSON.stringify(serie);
-            assert(expectedJson == generatedJson, "Unexpected json generated");
+            JSON.stringify(serie).should.be.equals(expectedJson)
             done();
         });
     });
 
     describe('#save()', () => {
         it("can be saved", function(done) {
-            new TvSerie({title: "Some tile", imdbId: "Some id", posterLink: "some link"}).save(done);
+            //TODO assert persisted fields
+            new TvSerie({title: "Some tile", imdbId: "Some id", posterLink: "some link"}).save().should.be.fulfilled.and.notify(done);
         });
     });
 
     describe('#find()', () => {
         it("can be listed", function(done) {
-            let newSeries = generateTvSeries(2);
-            TvSerie.create(newSeries, (err, model) => {
-                if (err)
-                    return done(err);
-                TvSerie.find({}, function(err, docs) {
-                    if (err)
-                        return done(err);
-                    docs.length.should.equal(2);
-                    done();
-                });
-            });
+            TvSerie.create(generateTvSeries(2)).then(() => {
+                return TvSerie.find({});
+            }).then((docs) => {
+                docs.should.be.lengthOf(2);
+            }).should.be.fulfilled.and.notify(done);
         });
     });
 
-    describe('#search()', () => {
-        it("TODO", function(done) {
-            done();
-        });
-    });
-
-    describe('#findByImdbId()', (done) => {
-        it("TODO", function(done) {
-            done();
-        });
-    });
-
-    describe('#findByImdbIdInDb()', (done) => {
-        it("TODO", function(done) {
-            done();
-        });
-    });
+    //TODO more tests
 });
-
-//mocks the http client to return a specific response
-function mockOMDBResponse(response) {
-
-    //removes the previous mock to use a different response
-    if (OpenMovieDatabase.search.restore) {
-        OpenMovieDatabase.search.restore();
-    }
-
-    //forces httpClient.get to always return the specified response
-    sinon.stub(OpenMovieDatabase, 'search', (title, type, page, callback) => {
-        callback(response);
-    });
-}
 
 //generates tv series
 function generateTvSeries(quantity) {
