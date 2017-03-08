@@ -19,3 +19,7 @@ Check each microservice README to see how to test it or run it individually.
 
 - [TV Series / Episodes](https://github.com/rafaelrpinto/TvTracker-Backend/tree/master/series-microservice)
 - More to come...
+
+## Disclaimer
+
+Dont mind the messy promise /chai's bdd usage. This was my first Node.js project :]
