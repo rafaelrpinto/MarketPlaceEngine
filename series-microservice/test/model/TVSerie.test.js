@@ -7,7 +7,7 @@ chai.should();
 let testConfig = require("../testConfig.js");
 
 //victim
-let TvSerie = require('../../model/TvSerie');
+let TvSerie = require('../../src/model/TvSerie');
 
 describe('TvSerie.js', () => {
     beforeEach(testConfig.db.beforeEach);

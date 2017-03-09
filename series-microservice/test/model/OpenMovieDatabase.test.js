@@ -12,7 +12,7 @@ chai.should();
 const fakeRequest = sinon.stub();
 
 //victim
-const OpenMovieDatabase = rewire('../../model/OpenMovieDatabase');
+const OpenMovieDatabase = rewire('../../src/model/OpenMovieDatabase');
 OpenMovieDatabase.__set__({'request': fakeRequest});
 
 describe('OpenMovieDatabase.js', () => {

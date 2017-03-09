@@ -4,7 +4,7 @@ const expect = chai.expect;
 chai.should();
 
 //Victim
-let PaginatedResult = require('../../model/PaginatedResult');
+let PaginatedResult = require('../../src/model/PaginatedResult');
 
 describe('PaginatedResult.js', () => {
     describe('#new PaginatedResult()', () => {
