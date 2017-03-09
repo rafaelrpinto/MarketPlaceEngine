@@ -7,7 +7,7 @@ testdb:
 
 series-microservice:
     build: ./series-microservice
-    hostname: mongo-express
+    hostname: series-microservice
     links:
         - testdb:testdb
     ports:
