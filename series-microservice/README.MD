@@ -152,7 +152,7 @@ And you will receive:
 
 ## TODO
 
-- Authentication (jwt)
-- Logging standard to integrate with ELK
-- Helmet integration
-- ....
+- JWT auth
+- Bunyan logging
+- Change promises to asyc / await
+- ...
