@@ -1,4 +1,8 @@
-# TvTracker-Backend
+## Deprecated
+
+OMDB has changed their API and gone private, so this repo won't be updated for a while...
+
+## Overview
 
 [![Build Status](https://travis-ci.org/rafaelrpinto/TvTracker-Backend.svg?branch=master)](https://travis-ci.org/rafaelrpinto/TvTracker-Backend)
 
