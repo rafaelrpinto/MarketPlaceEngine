@@ -4,7 +4,7 @@ OMDB has changed their API and gone private, so this repo won't be updated for a
 
 ## Overview
 
-[![Build Status](https://travis-ci.org/rafaelrpinto/tv-tracker-api.svg?branch=master)
+![Build Status](https://travis-ci.org/rafaelrpinto/tv-tracker-api.svg?branch=master)
 
 Node.js api for searching movies and tv series. Currently this API retrieves data from the [Open Movie Database](https://www.omdbapi.com/).
 
